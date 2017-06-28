@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "removeComments": true,
+    "newLine": "LF",
+    "inlineSources": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "Node",
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true
+  }
+}
