@@ -6,11 +6,10 @@ const path = require('path')
 const { dependencies } = require('../package.json')
 const webpack = require('webpack')
 
-const BabiliWebpackPlugin = require('babili-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -18,12 +17,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
  * that provide pure *.vue files that need compiling
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
-let whiteListedModules = ['vue']
+const whiteListedModules = ['vue']
 
-let rendererConfig = {
+const rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.js')
+    renderer: path.join(__dirname, '../src/renderer/main.ts')
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
@@ -40,6 +39,22 @@ let rendererConfig = {
       {
         test: /\.html$/,
         use: 'vue-html-loader'
+      },
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            // transpile result of typescript compiler using babel to use babel-plugin-component (convenient import for element-ui)
+            loader: 'babel-loader',
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true, // use transpileOnly mode to speed-up compilation
+            }
+          },
+        ],
       },
       {
         test: /\.js$/,
@@ -90,6 +105,7 @@ let rendererConfig = {
     __filename: process.env.NODE_ENV !== 'production'
   },
   plugins: [
+    new ForkTsCheckerWebpackPlugin({tsconfig: path.join(__dirname, '../src/renderer/tsconfig.json')}),
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
       filename: 'index.html',
@@ -116,7 +132,7 @@ let rendererConfig = {
       '@': path.join(__dirname, '../src/renderer'),
       'vue$': 'vue/dist/vue.esm.js'
     },
-    extensions: ['.js', '.vue', '.json', '.css', '.node']
+    extensions: ['.js', '.ts', '.vue', '.json', '.css', '.node']
   },
   target: 'electron-renderer'
 }
@@ -136,6 +152,8 @@ if (process.env.NODE_ENV !== 'production') {
  * Adjust rendererConfig for production settings
  */
 if (process.env.NODE_ENV === 'production') {
+  const BabiliWebpackPlugin = require('babili-webpack-plugin')
+
   rendererConfig.devtool = ''
 
   rendererConfig.plugins.push(

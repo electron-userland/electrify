@@ -146,7 +146,6 @@ function electronLog (data, color) {
 
 function greeting () {
   console.log(chalk.yellow.bold('\n  electron-vue'))
-  console.log(chalk.blue('  getting ready...') + '\n')
 }
 
 function init () {

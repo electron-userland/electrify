@@ -4,8 +4,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
   export default {
-    name: 'electrify'
+    name: 'Electrify'
   }
 </script>

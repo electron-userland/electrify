@@ -7,7 +7,7 @@ const { dependencies } = require('../package.json')
 const webpack = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
-let mainConfig = {
+const mainConfig = {
   entry: {
     main: path.join(__dirname, '../src/main/index.ts')
   },
@@ -21,7 +21,6 @@ let mainConfig = {
         loader: 'ts-loader',
         options: {
           transpileOnly: true, // IMPORTANT! use transpileOnly mode to speed-up compilation
-          configFileName: 'src/main/tsconfig.json'
         }
       },
       {
@@ -45,8 +44,8 @@ let mainConfig = {
     path: path.join(__dirname, '../dist/electron')
   },
   plugins: [
+    new ForkTsCheckerWebpackPlugin({tsconfig: path.join(__dirname, '../src/main/tsconfig.json')}),
     new webpack.NoEmitOnErrorsPlugin(),
-    new ForkTsCheckerWebpackPlugin({tsconfig: path.join(__dirname, '../src/main/tsconfig.json')})
   ],
   resolve: {
     extensions: ['.js', '.json', '.node', '.ts']
