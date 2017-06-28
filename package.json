@@ -43,7 +43,7 @@
     "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "1.7.3",
-    "electron-builder": "^19.10.0",
+    "electron-builder": "^19.11.0",
     "electron-devtools-installer": "^2.2.0",
     "extract-text-webpack-plugin": "^2.1.2",
     "file-loader": "^0.11.2",
