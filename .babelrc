@@ -1,0 +1,39 @@
+{
+  "comments": false,
+  "env": {
+    "main": {
+      "presets": [
+        ["env", {
+          "targets": { "node": 8 }
+        }]
+      ]
+    },
+    "renderer": {
+      "presets": [
+        ["env", {
+          "modules": false,
+          "targets": { "electron": "1.7.3" }
+        }]
+      ],
+      "plugins": [
+        [
+          "component",
+          [
+            {
+              "libraryName": "element-ui",
+              "styleLibraryName": "theme-default"
+            }
+          ]
+        ]
+      ]
+    },
+    "web": {
+      "presets": [
+        ["env", {
+          "modules": false
+        }]
+      ]
+    }
+  },
+  "plugins": ["transform-runtime"]
+}
