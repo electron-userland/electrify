@@ -1,12 +1,16 @@
-import Vue from 'vue'
-import axios from 'axios'
-import { Menu, MenuItem, Submenu, Row, Col } from 'element-ui'
-// import "iview/dist/styles/iview.css"
-// import Checkbox from 'iview/src/components/checkbox'
+import Vue from "vue"
+import axios from "axios"
+import { Menu, MenuItem, Submenu, Row, Col } from "element-ui"
+import 'element-ui/lib/theme-default/reset.css'
+
+import lang from 'element-ui/lib/locale/lang/en'
+import locale from 'element-ui/lib/locale'
 
 import App from './App.vue'
 import router from './router'
 import store from './store'
+
+locale.use(lang)
 
 if (!process.env.IS_WEB) {
   Vue.use(require('vue-electron'))

@@ -1,4 +1,5 @@
 // https://github.com/ElemeFE/element/pull/3910/files
+
 declare module "element-ui" {
 
   // component.d.t
@@ -133,4 +134,14 @@ declare module "element-ui" {
     /** Unique identification */
     index: string
   }
+}
+
+declare module "element-ui/lib/locale/lang/en" {
+  const lang: any
+  export default lang
+}
+
+declare module "element-ui/lib/locale" {
+  const locale: any
+  export default locale
 }
