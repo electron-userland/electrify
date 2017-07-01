@@ -7,14 +7,16 @@
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
-    "build:dir": "node .electron-vue/build.js && electron-builder --dir",
+    "build:dir": "node .electron-vue/build.js && electron-builder --dir -c.compression=store",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
     "dev": "node .electron-vue/dev-runner.js",
     "pack": "yarn pack:main && yarn pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "vuetype": "vuetype src/renderer"
+    "vuetypes": "vuetype src/renderer",
+    "lint": "tslint -c ./node_modules/electron-builder-tslint-config/tslint.json -p src/renderer",
+    "lintAndFix": "tslint -c ./node_modules/electron-builder-tslint-config/tslint.json -p src/renderer --fix"
   },
   "build": {
     "extends": ".electron-vue/electron-builder.yml",
@@ -23,12 +25,15 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "bluebird-lst": "^1.0.2",
     "electron-debug": "^1.2.0",
+    "execa": "^0.7.0",
     "iview": "^2.0.0-rc.17",
     "vue": "^2.3.4",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.7.0",
-    "vuex": "^2.3.1"
+    "vuex": "^2.3.1",
+    "xstream": "^10.8.0"
   },
   "devDependencies": {
     "babel-loader": "^7.1.1",
@@ -44,6 +49,7 @@
     "devtron": "^1.4.0",
     "electron": "1.7.3",
     "electron-builder": "^19.11.0",
+    "electron-builder-tslint-config": "^1.0.0",
     "electron-devtools-installer": "^2.2.0",
     "extract-text-webpack-plugin": "^3.0.0-beta.3",
     "file-loader": "^0.11.2",
@@ -51,8 +57,10 @@
     "html-webpack-plugin": "^2.29.0",
     "json-loader": "^0.5.4",
     "multispinner": "^0.2.1",
+    "shell-env": "^0.3.0",
     "style-loader": "^0.18.2",
     "ts-loader": "^2.2.1",
+    "tslint": "^5.4.3",
     "typescript": "^2.4.1",
     "url-loader": "^0.5.9",
     "vue-html-loader": "^1.2.4",

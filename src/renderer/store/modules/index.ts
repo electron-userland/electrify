@@ -3,7 +3,7 @@
  * in a one-shot manner. There should not be any reason to edit this file.
  */
 
-const files: any = (<any>require).context(".", false, /\.ts$/)
+const files: any = (require as any).context(".", false, /\.ts$/)
 const modules: any = {}
 
 for (const key of files.keys()) {

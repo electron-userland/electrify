@@ -5,5 +5,5 @@
     "experimentalDecorators": true,
     "allowJs": true
   },
-  "include": ["**/*.ts", "*.d.ts"]
+  "include": ["**/*.ts", "*.d.ts", "../rx-ipc/*.ts"]
 }

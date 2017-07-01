@@ -12,7 +12,7 @@ if (!process.env.IS_WEB) {
 }
 
 // noinspection JSUnusedGlobalSymbols
-(<any>Vue).http = (<any>Vue).prototype.$http = axios
+(Vue as any).http = (Vue as any).prototype.$http = axios
 Vue.config.productionTip = false
 
 new Vue({

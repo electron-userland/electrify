@@ -31,10 +31,7 @@
         <i-col span="5">
           <Menu width="auto" @on-select="onMenuSelect">
             <template v-for="item in items">
-              <Submenu :name="item.name">
-                <template slot="title">{{item.title}}</template>
-                <Menu-item v-for="subItem in item.children" :name="subItem.name" :key="subItem.name">{{subItem.title}}</Menu-item>
-              </Submenu>
+              <Menu-item :name="item.name" :key="item.name">{{item.title}}</Menu-item>
             </template>
           </Menu>
         </i-col>
@@ -58,10 +55,6 @@
           {
             name: "prerequisites",
             title: "Prerequisites",
-            children: [
-              {name: "yarn", title: "yarn"},
-              {name: "electron-builder", title: "electron-builder"},
-            ]
           },
           {
             name: "icons",

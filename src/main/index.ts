@@ -1,12 +1,12 @@
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow, shell } from "electron"
+import rxIpc from "../rx-ipc/main"
+import xstream, { Listener, Producer } from "xstream"
+import { Lazy } from "./util"
 
 // to debug packed app as well
-require('electron-debug')({enabled: true})
+require("electron-debug")({enabled: true})
 
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
+// set `__static` path to static files in production
 if (process.env.NODE_ENV !== "development") {
   (<any>global).__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
 }
@@ -14,7 +14,36 @@ if (process.env.NODE_ENV !== "development") {
 let mainWindow: Electron.BrowserWindow | null = null
 const winURL = process.env.NODE_ENV === "development" ? `http://localhost:9080` : `file://${__dirname}/index.html`
 
+const bashEnv = new Lazy(() => require('shell-env')())
+const exec = require("execa")
+
+// todo listed system changes (to update status when yarn will be installed
+class ToolStatusProducer implements Producer<any> {
+  start(listener: Listener<any>) {
+    bashEnv.value
+      .then(env => exec("yarn", ["--version"], {env}))
+      .then(it => listener.next({
+        yarn: true
+      }))
+      .catch(error => {
+        if (error.code === "ENOENT") {
+          listener.next({
+            yarn: false
+          })
+        }
+        else {
+          listener.error(error)
+        }
+      })
+  }
+
+  stop() {
+  }
+}
+
 function createWindow() {
+  rxIpc.registerListener("toolStatus", () => xstream.create(new ToolStatusProducer()))
+
   /**
    * Initial window options
    */
@@ -28,6 +57,11 @@ function createWindow() {
 
   mainWindow.on("closed", () => {
     mainWindow = null
+  })
+
+  mainWindow.webContents.on("new-window", function (event, url) {
+    event.preventDefault()
+    shell.openExternal(url)
   })
 }
 

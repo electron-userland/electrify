@@ -4,6 +4,12 @@
     <option name="PER_PROJECT_SETTINGS">
       <value>
         <option name="LINE_SEPARATOR" value="&#10;" />
+        <TypeScriptCodeStyleSettings>
+          <option name="USE_SEMICOLON_AFTER_STATEMENT" value="false" />
+          <option name="FORCE_SEMICOLON_STYLE" value="true" />
+          <option name="FORCE_QUOTE_STYlE" value="true" />
+          <option name="SPACES_WITHIN_IMPORTS" value="true" />
+        </TypeScriptCodeStyleSettings>
         <editorconfig>
           <option name="ENABLED" value="false" />
         </editorconfig>

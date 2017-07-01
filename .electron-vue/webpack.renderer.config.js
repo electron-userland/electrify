@@ -45,10 +45,6 @@ const rendererConfig = {
         exclude: /node_modules/,
         use: [
           {
-            // transpile result of typescript compiler using babel to use babel-plugin-component (convenient import for element-ui)
-            loader: 'babel-loader',
-          },
-          {
             loader: 'ts-loader',
             options: {
               transpileOnly: true, // use transpileOnly mode to speed-up compilation
@@ -159,7 +155,7 @@ if (process.env.NODE_ENV === 'production') {
   rendererConfig.plugins.push(
     new BabiliWebpackPlugin({
       removeConsole: true,
-      removeDebugger: true
+      // removeDebugger: true
     }),
     new CopyWebpackPlugin([
       {

@@ -2,12 +2,15 @@
   <dictionary name="develar">
     <words>
       <w>axios</w>
+      <w>deduplication</w>
       <w>devtool</w>
       <w>devtools</w>
       <w>devtron</w>
       <w>iview</w>
       <w>minify</w>
       <w>transpile</w>
+      <w>xstream</w>
+      <w>yarnpkg</w>
     </words>
   </dictionary>
 </component>
