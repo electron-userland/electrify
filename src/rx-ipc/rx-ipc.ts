@@ -1,7 +1,8 @@
-import { Listener, Producer, Stream } from "xstream"
+import { Listener, Producer, Stream, Observable } from "xstream"
 import xstream from "xstream"
-import { ObservableFactoryFunction } from "./index"
 import BluebirdPromise from "bluebird-lst"
+
+export type ObservableFactoryFunction = (...args: Array<any>) => Observable<any>
 
 export class RxIpc {
   static listenerCount = 0
@@ -37,8 +38,12 @@ export class RxIpc {
   }
 
   registerListener(channel: string, observableFactory: ObservableFactoryFunction): void {
+    if (this.listeners[channel]) {
+      throw new Error(`Channel ${channel} already registered`)
+    }
+
     this.listeners[channel] = true
-    this.ipc.on(channel, function openChannel(event: any, subChannel: string, ...args: Array<any>) {
+    this.ipc.on(channel, function (event: any, subChannel: string, ...args: Array<any>) {
       const observable = observableFactory(...args)
       observable.subscribe(new MyListener(event.sender, subChannel))
     })
@@ -50,8 +55,7 @@ export class RxIpc {
   }
 
   runCommand(channel: string, receiver: Electron.IpcRenderer | Electron.WebContents | null = null, ...args: Array<any>[]): Stream<any> {
-    const subChannel = `${channel}:${RxIpc.listenerCount}`
-    RxIpc.listenerCount++
+    const subChannel = `${channel}:${RxIpc.listenerCount++}`
     const target = receiver == null ? this.ipc as Electron.IpcRenderer : receiver
     target.send(channel, subChannel, ...args)
 
@@ -60,6 +64,10 @@ export class RxIpc {
       .catch(() => {
         stream.shamefullySendError(new Error(`Invalid channel: ${channel}`))
       })
+
+    if (process.env.NODE_ENV === "development") {
+      // return stream.debug(channel)
+    }
     return stream
   }
 }

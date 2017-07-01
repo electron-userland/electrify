@@ -20,7 +20,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const whiteListedModules = ['vue']
 
 const rendererConfig = {
-  devtool: '#cheap-module-eval-source-map',
+  devtool: '#eval-source-map',
   entry: {
     renderer: path.join(__dirname, '../src/renderer/main.ts')
   },

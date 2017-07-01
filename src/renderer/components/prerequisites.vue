@@ -16,27 +16,59 @@
       </ul>
     </Card>
   </div>
-  <!--<Steps direction="vertical">-->
-    <!--<Step title="Yarn" status="wait">-->
-      <!--<template slot="content">-->
-      <!--<ul>-->
-        <!--<li>npm is unreliable and slow</li>-->
-        <!--<li>npm doesn't produce ideal file tree</li>-->
-        <!--<li>npm doesn't perform automatic deduplication and cleaning</li>-->
-      <!--</ul>-->
-      <!--</template>-->
-    <!--</Step>-->
-    <!--<Step title="electron-builder" content="wef" status="finish"></Step>-->
-    <!--<Step title="electron-builder" content="wef" status="wait"></Step>-->
-  <!--</Steps>-->
 </template>
 
 <script lang="ts">
-  export default {
-    data: function () {
-      return {
-        yarn: false
+  import Vue from "vue"
+  import Component from "vue-class-component"
+  import rxIpc from "../../rx-ipc/renderer"
+  import { Listener } from "xstream"
+
+  const iView = require("iview")
+
+  Component.registerHooks(["beforeRouteEnter", "beforeRouteLeave"])
+
+  class ToolListener implements Listener<any> {
+    private isBarActive = true
+
+    constructor(private readonly resolve: Function) {
+      iView.LoadingBar.start()
+    }
+
+    next(data: any): void {
+      console.log("COME")
+      this.finishLoadingBar()
+      console.log("set data")
+      this.resolve(vm => vm.setData(data))
+    }
+
+    error(error: any): void {
+      this.finishLoadingBar()
+      console.error(error)
+    }
+
+    complete(): void {
+    }
+
+    private finishLoadingBar() {
+      if (this.isBarActive) {
+        iView.LoadingBar.finish()
+        this.isBarActive = false
       }
-    },
+    }
+  }
+
+  @Component()
+  export default class Prerequisites extends Vue {
+    yarn = false
+
+    beforeRouteEnter(to, from, next) {
+      rxIpc.runCommand("toolStatus")
+        .subscribe(new ToolListener(next))
+    }
+
+    setData(data) {
+      this.yarn = data.yarn
+    }
   }
 </script>

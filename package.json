@@ -2,7 +2,7 @@
   "name": "electrify",
   "version": "0.0.0",
   "author": "Vladimir Krivosheev <develar@gmail.com>",
-  "description": "Electrify",
+  "description": "Step-by-step wizard to prepare Electron app for distribution, from packaging to auto-update",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -63,6 +63,7 @@
     "tslint": "^5.4.3",
     "typescript": "^2.4.1",
     "url-loader": "^0.5.9",
+    "vue-class-component": "^5.0.2",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^12.2.1",
     "vue-style-loader": "^3.0.1",

@@ -42,11 +42,6 @@ class ToolStatusProducer implements Producer<any> {
 }
 
 function createWindow() {
-  rxIpc.registerListener("toolStatus", () => xstream.create(new ToolStatusProducer()))
-
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
@@ -65,7 +60,10 @@ function createWindow() {
   })
 }
 
-app.on("ready", createWindow)
+app.on("ready", () => {
+  rxIpc.registerListener("toolStatus", () => xstream.create(new ToolStatusProducer()))
+  createWindow()
+})
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
