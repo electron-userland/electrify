@@ -1,3 +1,8 @@
+<style scoped>
+  .ivu-card {
+    margin-bottom: 10px
+  }
+</style>
 <template>
   <div>
     <Card>
@@ -15,6 +20,21 @@
         <li>-&nbsp;&nbsp;npm doesn't perform automatic deduplication and cleaning.</li>
       </ul>
     </Card>
+    <Card>
+      <div slot="title">electron-builder
+        <Tag v-if="dependencies['electron-builder'].installed" color="green">Installed</Tag>
+        <template v-else>
+          <Tag color="red">Not installed</Tag>
+          Please install <a href="https://github.com/electron-userland/electron-builder/" target="_blank">electron-builder</a> locally.
+        </template>
+      </div>
+
+      <!-- Yes,  -->
+      <template v-if="dependencies['electron-builder'].installed">
+        Latest electron-builder version: <a href="https://github.com/electron-userland/electron-builder/releases" target="_blank">{{dependencies['electron-builder'].latest}}</a>
+      </template>
+      <code v-else>yarn add electron-builder --dev</code>
+    </Card>
   </div>
 </template>
 
@@ -28,6 +48,7 @@
   @Component
   export default class Prerequisites extends Vue {
     yarn = false
+    dependencies = {}
 
     beforeRouteEnter(to: Route, from: Route, next: Function) {
       // catch before then to not handle error in the then handler

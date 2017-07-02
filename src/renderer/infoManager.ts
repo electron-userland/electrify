@@ -1,16 +1,9 @@
 import BluebirdPromise from "bluebird-lst"
 import iview from "iview"
 import { Listener } from "xstream"
+import { ProjectInfo } from "../common/projectInfo"
 import { Lazy } from "../main/util"
 import rxIpc from "../rx-ipc/renderer"
-
-export interface ProjectInfoPrerequisites {
-  yarn: boolean
-}
-
-export interface ProjectInfo {
-  prerequisites: ProjectInfoPrerequisites
-}
 
 class InfoListener implements Listener<ProjectInfo> {
   constructor(private resolve: ((data: ProjectInfo) => void) | null, private reject: ((error: Error | any) => void) | null) {
@@ -23,13 +16,14 @@ class InfoListener implements Listener<ProjectInfo> {
       Object.assign(info, data)
     }
     else {
+      info = data
       iview.LoadingBar.finish()
       this.resolve = null
       resolve(data)
     }
   }
 
-  error(error: ProjectInfo): void {
+  error(error: any): void {
     const reject = this.reject
     if (reject == null) {
       console.error()
@@ -37,7 +31,8 @@ class InfoListener implements Listener<ProjectInfo> {
     else {
       iview.LoadingBar.finish()
       this.reject = null
-      reject(error)
+      console.error(error)
+      reject(error instanceof Error ? error : new Error(error))
     }
   }
 
@@ -45,7 +40,7 @@ class InfoListener implements Listener<ProjectInfo> {
   }
 }
 
-const info: ProjectInfo | null = null
+let info: ProjectInfo | null = null
 
 const subscription = new Lazy<ProjectInfo>(() => new BluebirdPromise<ProjectInfo>(function (resolve, reject) {
   rxIpc.runCommand("toolStatus")

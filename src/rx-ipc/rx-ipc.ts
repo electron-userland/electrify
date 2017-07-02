@@ -3,7 +3,7 @@ import xstream, { Listener, Observable, Producer, Stream } from "xstream"
 
 const debug = require("debug")("rx-ipc")
 
-export type ObservableFactoryFunction = (...args: Array<any>) => Observable<any>
+export type ObservableFactoryFunction = (webContents: Electron.WebContents, args?: Array<any>) => Observable<any>
 
 export class RxIpc {
   static listenerCount = 0
@@ -45,7 +45,7 @@ export class RxIpc {
 
     this.listeners[channel] = true
     this.ipc.on(channel, function (event: Electron.Event, subChannel: string, ...args: Array<any>) {
-      const observable = observableFactory(...args)
+      const observable = observableFactory(event.sender, args)
       const subscription = observable.subscribe(new MyListener(event.sender, subChannel))
       event.sender.on("destroyed", function () {
         debug(`Unsubscribe ${subChannel} on web contents destroyed`)

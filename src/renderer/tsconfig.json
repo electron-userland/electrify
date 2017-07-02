@@ -4,5 +4,5 @@
     "allowJs": true,
     "module": "esnext"
   },
-  "include": ["**/*.ts", "*.d.ts", "../rx-ipc/*.ts"]
+  "include": ["**/*.ts", "*.d.ts", "../rx-ipc/*.ts", "../common/*.ts"]
 }

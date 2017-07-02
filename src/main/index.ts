@@ -1,82 +1,62 @@
 import { app, BrowserWindow, shell } from "electron"
+import xstream from "xstream"
 import rxIpc from "../rx-ipc/main"
-import xstream, { Listener, Producer } from "xstream"
-import { Lazy } from "./util"
+import { ProjectInfoProducer } from "./ProjectInfoProducer"
+import { Project, StoreManager, windowToProject } from "./store"
 
 // to debug packed app as well
 require("electron-debug")({enabled: true})
 
+const isDev = process.env.NODE_ENV === "development"
+
 // set `__static` path to static files in production
-if (process.env.NODE_ENV !== "development") {
+if (!isDev) {
   (<any>global).__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
 }
 
-let mainWindow: Electron.BrowserWindow | null = null
-const winURL = process.env.NODE_ENV === "development" ? `http://localhost:9080` : `file://${__dirname}/index.html`
+const winURL = isDev ? `http://localhost:9080` : `file://${__dirname}/index.html`
 
-const bashEnv = new Lazy(() => require('shell-env')())
-const exec = require("execa")
+app.once("ready", () => {
+  const storeManager = new StoreManager()
 
-// todo listed system changes (to update status when yarn will be installed
-class ToolStatusProducer implements Producer<any> {
-  start(listener: Listener<any>) {
-    bashEnv.value
-      .then(env => exec("yarn", ["--version"], {env}))
-      .then(it => listener.next({
-        prerequisites: {
-          yarn: true,
-        },
-      }))
-      .catch(error => {
-        if (error.code === "ENOENT") {
-          listener.next({
-            prerequisites: {
-              yarn: false,
-            },
-          })
-        }
-        else {
-          listener.error(error)
-        }
-      })
+  const projects: Array<Project | null> = storeManager.getProjects()
+  if (projects.length === 0) {
+    projects.push(null)
   }
 
-  stop() {
+  rxIpc.registerListener("toolStatus", webContents => xstream.create(new ProjectInfoProducer(webContents, storeManager)))
+
+  for (const project of projects) {
+    createWindow(project, storeManager)
   }
+
+  app.on("activate", () => {
+    if (windowToProject.size === 0) {
+      createWindow(null, storeManager)
+    }
+  })
+})
+
+if (process.platform !== "darwin") {
+  app.on("window-all-closed", () => {
+    app.quit()
+  })
 }
 
-function createWindow() {
-  mainWindow = new BrowserWindow({
+function createWindow(project: Project | null, storeManager: StoreManager) {
+  const window = new BrowserWindow({
     height: 563,
     useContentSize: true,
     width: 1000
   })
 
-  mainWindow.loadURL(winURL)
+  if (project != null) {
+    storeManager.addProject(project, window, false)
+  }
+  window.loadURL(winURL)
 
-  mainWindow.on("closed", () => {
-    mainWindow = null
-  })
-
-  mainWindow.webContents.on("new-window", function (event, url) {
+  window.webContents.on("new-window", (event, url) => {
     event.preventDefault()
     shell.openExternal(url)
   })
 }
-
-app.on("ready", () => {
-  rxIpc.registerListener("toolStatus", () => xstream.create(new ToolStatusProducer()))
-  createWindow()
-})
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit()
-  }
-})
-
-app.on("activate", () => {
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
