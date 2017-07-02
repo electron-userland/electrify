@@ -9,6 +9,7 @@ import { app } from "electron"
 
 // Set environment for development
 process.env.NODE_ENV = "development"
+process.env.DEBUG = "rx-ipc"
 
 // Install `electron-debug` with `devtron`
 require("electron-debug")({showDevTools: true})

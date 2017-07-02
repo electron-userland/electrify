@@ -1,10 +1,8 @@
 import Vue from "vue"
 import axios from "axios"
-
 import App from "./App.vue"
 import router from "./router"
 import store from "./store"
-
 import "./initIView"
 
 if (!process.env.IS_WEB) {
@@ -16,7 +14,7 @@ if (!process.env.IS_WEB) {
 Vue.config.productionTip = false
 
 new Vue({
-  components: { App },
+  components: {App},
   router,
   store,
   template: "<App/>"

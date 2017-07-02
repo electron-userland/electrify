@@ -23,12 +23,16 @@ class ToolStatusProducer implements Producer<any> {
     bashEnv.value
       .then(env => exec("yarn", ["--version"], {env}))
       .then(it => listener.next({
-        yarn: true
+        prerequisites: {
+          yarn: true,
+        },
       }))
       .catch(error => {
         if (error.code === "ENOENT") {
           listener.next({
-            yarn: false
+            prerequisites: {
+              yarn: false,
+            },
           })
         }
         else {

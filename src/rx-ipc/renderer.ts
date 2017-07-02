@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron';
-import { RxIpc } from './rx-ipc';
+import { ipcRenderer } from "electron"
+import { RxIpc } from "./rx-ipc"
 
-export default new RxIpc(ipcRenderer);
+export default new RxIpc(ipcRenderer)

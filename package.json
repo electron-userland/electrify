@@ -26,6 +26,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "bluebird-lst": "^1.0.2",
+    "debug": "^2.6.8",
     "electron-debug": "^1.2.0",
     "execa": "^0.7.0",
     "iview": "^2.0.0-rc.17",

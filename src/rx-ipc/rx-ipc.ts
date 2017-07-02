@@ -2,6 +2,8 @@ import { Listener, Producer, Stream, Observable } from "xstream"
 import xstream from "xstream"
 import BluebirdPromise from "bluebird-lst"
 
+const debug = require("debug")("rx-ipc")
+
 export type ObservableFactoryFunction = (...args: Array<any>) => Observable<any>
 
 export class RxIpc {
@@ -43,9 +45,13 @@ export class RxIpc {
     }
 
     this.listeners[channel] = true
-    this.ipc.on(channel, function (event: any, subChannel: string, ...args: Array<any>) {
+    this.ipc.on(channel, function (event: Electron.Event, subChannel: string, ...args: Array<any>) {
       const observable = observableFactory(...args)
-      observable.subscribe(new MyListener(event.sender, subChannel))
+      const subscription = observable.subscribe(new MyListener(event.sender, subChannel))
+      event.sender.on("destroyed", function () {
+        debug(`Unsubscribe ${subChannel} on web contents destroyed`)
+        subscription.unsubscribe()
+      })
     })
   }
 
@@ -66,7 +72,7 @@ export class RxIpc {
       })
 
     if (process.env.NODE_ENV === "development") {
-      // return stream.debug(channel)
+      return stream.debug(channel)
     }
     return stream
   }
@@ -104,7 +110,7 @@ class MyProducer implements Producer<any> {
 }
 
 class MyListener implements Listener<any> {
-  constructor(private replyTo: Electron.IpcRenderer, private subChannel: string) {
+  constructor(private replyTo: Electron.WebContents, private subChannel: string) {
   }
 
   next(data: any) {

@@ -21,54 +21,19 @@
 <script lang="ts">
   import Vue from "vue"
   import Component from "vue-class-component"
-  import rxIpc from "../../rx-ipc/renderer"
   import { Listener } from "xstream"
+  import { Route } from "vue-router"
+  import { getInfo, ProjectInfo } from "../infoManager"
 
-  const iView = require("iview")
-
-  Component.registerHooks(["beforeRouteEnter", "beforeRouteLeave"])
-
-  class ToolListener implements Listener<any> {
-    private isBarActive = true
-
-    constructor(private readonly resolve: Function) {
-      iView.LoadingBar.start()
-    }
-
-    next(data: any): void {
-      console.log("COME")
-      this.finishLoadingBar()
-      console.log("set data")
-      this.resolve(vm => vm.setData(data))
-    }
-
-    error(error: any): void {
-      this.finishLoadingBar()
-      console.error(error)
-    }
-
-    complete(): void {
-    }
-
-    private finishLoadingBar() {
-      if (this.isBarActive) {
-        iView.LoadingBar.finish()
-        this.isBarActive = false
-      }
-    }
-  }
-
-  @Component()
+  @Component
   export default class Prerequisites extends Vue {
     yarn = false
 
-    beforeRouteEnter(to, from, next) {
-      rxIpc.runCommand("toolStatus")
-        .subscribe(new ToolListener(next))
-    }
-
-    setData(data) {
-      this.yarn = data.yarn
+    beforeRouteEnter(to: Route, from: Route, next: Function) {
+      // catch before then to not handle error in the then handler
+      getInfo()
+        .catch(error => next(error))
+        .then((it: ProjectInfo) => next(vm => Object.assign(vm, it.prerequisites)))
     }
   }
 </script>
