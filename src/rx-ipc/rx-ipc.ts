@@ -1,6 +1,5 @@
-import { Listener, Producer, Stream, Observable } from "xstream"
-import xstream from "xstream"
 import BluebirdPromise from "bluebird-lst"
+import xstream, { Listener, Observable, Producer, Stream } from "xstream"
 
 const debug = require("debug")("rx-ipc")
 
@@ -27,9 +26,9 @@ export class RxIpc {
         else {
           reject(false)
         }
-      });
+      })
       target.send("rx-ipc-check-listener", channel)
-    });
+    })
   }
 
   cleanUp() {

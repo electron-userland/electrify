@@ -1,8 +1,8 @@
-import { Listener } from "xstream"
 import BluebirdPromise from "bluebird-lst"
 import iview from "iview"
-import rxIpc from "../rx-ipc/renderer"
+import { Listener } from "xstream"
 import { Lazy } from "../main/util"
+import rxIpc from "../rx-ipc/renderer"
 
 export interface ProjectInfoPrerequisites {
   yarn: boolean
@@ -13,7 +13,7 @@ export interface ProjectInfo {
 }
 
 class InfoListener implements Listener<ProjectInfo> {
-  constructor(private resolve: Function | null, private reject: Function | null) {
+  constructor(private resolve: ((data: ProjectInfo) => void) | null, private reject: ((error: Error | any) => void) | null) {
     iview.LoadingBar.start()
   }
 

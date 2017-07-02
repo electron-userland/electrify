@@ -1,6 +1,6 @@
 import Vue from "vue"
-import Router from "vue-router"
 import Component from "vue-class-component"
+import Router from "vue-router"
 
 Vue.use(Router)
 
@@ -16,15 +16,15 @@ export default new Router({
     {
       path: "/project",
       redirect: "/project/prerequisites",
-      component: require("./components/project"),
+      component: () => import("./components/project.vue"),
       children: [
         {
           path: "prerequisites",
-          component: require("./components/prerequisites")
+          component: () => import("./components/prerequisites.vue")
         },
         {
           path: "icons",
-          component: require("./components/icons")
+          component: () => import("./components/icons.vue")
         },
       ],
     },
