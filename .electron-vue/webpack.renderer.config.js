@@ -1,15 +1,12 @@
 'use strict'
 
-process.env.BABEL_ENV = 'renderer'
-
 const path = require('path')
-const { dependencies } = require('../package.json')
 const webpack = require('webpack')
-
+const webpackConfigurator = require("./webpackConfigurator")
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -19,14 +16,8 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
  */
 const whiteListedModules = ['vue']
 
-const rendererConfig = {
-  devtool: '#eval-source-map',
-  entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.ts')
-  },
-  externals: [
-    ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
-  ],
+const isProduction = process.env.NODE_ENV === 'production'
+const rendererConfig = webpackConfigurator.configure(path.join(__dirname, '../src/renderer/index.ts'), "renderer", new Set(whiteListedModules), {
   module: {
     rules: [
       {
@@ -41,32 +32,11 @@ const rendererConfig = {
         use: 'vue-html-loader'
       },
       {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true, // use transpileOnly mode to speed-up compilation
-            }
-          },
-        ],
-      },
-      {
-        test: /\.js$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.node$/,
-        use: 'node-loader'
-      },
-      {
         test: /\.vue$/,
         use: {
           loader: 'vue-loader',
           options: {
-            extractCSS: process.env.NODE_ENV === 'production',
+            extractCSS: isProduction,
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
               scss: 'vue-style-loader!css-loader!sass-loader'
@@ -96,12 +66,7 @@ const rendererConfig = {
       }
     ]
   },
-  node: {
-    __dirname: process.env.NODE_ENV !== 'production',
-    __filename: process.env.NODE_ENV !== 'production'
-  },
   plugins: [
-    new ForkTsCheckerWebpackPlugin({tsconfig: path.join(__dirname, '../src/renderer/tsconfig.json')}),
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
       filename: 'index.html',
@@ -115,62 +80,24 @@ const rendererConfig = {
         ? path.resolve(__dirname, '../node_modules')
         : false
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
   ],
-  output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-    path: path.join(__dirname, '../dist/electron')
-  },
   resolve: {
     alias: {
       '@': path.join(__dirname, '../src/renderer'),
       'vue$': 'vue/dist/vue.esm.js'
     },
-    extensions: ['.js', '.ts', '.vue', '.json', '.css', '.node']
+    extensions: ['.vue', '.css']
   },
-  target: 'electron-renderer'
-}
+})
 
-/**
- * Adjust rendererConfig for development settings
- */
-if (process.env.NODE_ENV !== 'production') {
-  rendererConfig.plugins.push(
-    new webpack.DefinePlugin({
-      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
-    })
-  )
-}
-
-/**
- * Adjust rendererConfig for production settings
- */
-if (process.env.NODE_ENV === 'production') {
-  const BabiliWebpackPlugin = require('babili-webpack-plugin')
-
-  rendererConfig.devtool = ''
-
-  rendererConfig.plugins.push(
-    new BabiliWebpackPlugin({
-      removeConsole: true,
-      // removeDebugger: true
-    }),
-    new CopyWebpackPlugin([
-      {
-        from: path.join(__dirname, '../static'),
-        to: path.join(__dirname, '../dist/electron/static'),
-        ignore: ['.*']
-      }
-    ]),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  )
+if (isProduction) {
+  rendererConfig.plugins.push(new CopyWebpackPlugin([
+    {
+      from: path.join(__dirname, '../static'),
+      to: path.join(__dirname, '../dist/electron/static'),
+      ignore: ['.*']
+    }
+  ]))
 }
 
 module.exports = rendererConfig

@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="dev" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file=".electron-vue/dev-runner.js" working-dir="$PROJECT_DIR$">
+    <envs>
+      <env name="IJ" value="true" />
+    </envs>
+    <method />
+  </configuration>
+</component>

@@ -1,9 +1,11 @@
 import BluebirdPromise from "bluebird-lst"
-import xstream, { Listener, Observable, Producer, Stream } from "xstream"
+import { diff, IDiff } from "deep-diff"
+import xstream, { Listener, Producer, Stream } from "xstream"
 
+const clone = require("clone")
 const debug = require("debug")("rx-ipc")
 
-export type ObservableFactoryFunction = (webContents: Electron.WebContents, args?: Array<any>) => Observable<any>
+export type ObservableFactory = (webContents: Electron.WebContents, args?: Array<any>) => Stream<any>
 
 export class RxIpc {
   static listenerCount = 0
@@ -38,19 +40,25 @@ export class RxIpc {
     })
   }
 
-  registerListener(channel: string, observableFactory: ObservableFactoryFunction): void {
+  registerListener(channel: string, observableFactory: ObservableFactory): void {
     if (this.listeners[channel]) {
       throw new Error(`Channel ${channel} already registered`)
     }
 
     this.listeners[channel] = true
     this.ipc.on(channel, function (event: Electron.Event, subChannel: string, ...args: Array<any>) {
-      const observable = observableFactory(event.sender, args)
-      const subscription = observable.subscribe(new MyListener(event.sender, subChannel))
-      event.sender.on("destroyed", function () {
-        debug(`Unsubscribe ${subChannel} on web contents destroyed`)
-        subscription.unsubscribe()
-      })
+      debug(`Subscribe ${subChannel} to ${channel}`)
+      try {
+        const observable = observableFactory(event.sender, args)
+        const subscription = observable.subscribe(new MyListener(event.sender, subChannel))
+        event.sender.on("destroyed", function () {
+          debug(`Unsubscribe ${subChannel} from ${channel} on web contents destroyed`)
+          subscription.unsubscribe()
+        })
+      }
+      catch (e) {
+        event.sender.send(subChannel, MessageType.ERROR, `Cannot subscribe: ${e.toString()}`)
+      }
     })
   }
 
@@ -59,12 +67,18 @@ export class RxIpc {
     delete this.listeners[channel]
   }
 
-  runCommand(channel: string, receiver: Electron.IpcRenderer | Electron.WebContents | null = null, ...args: Array<any>[]): Stream<any> {
+  runCommand<T>(channel: string, receiver: Electron.IpcRenderer | Electron.WebContents | null = null, args?: Array<any> | null, applicator?: Applicator): Stream<T> {
     const subChannel = `${channel}:${RxIpc.listenerCount++}`
     const target = receiver == null ? this.ipc as Electron.IpcRenderer : receiver
-    target.send(channel, subChannel, ...args)
 
-    const stream = xstream.create(new MyProducer(this.ipc, subChannel))
+    if (args == null) {
+      target.send(channel, subChannel)
+    }
+    else {
+      target.send(channel, subChannel, ...args)
+    }
+
+    const stream = xstream.create(new MyProducer(this.ipc, subChannel, applicator))
     this.checkRemoteListener(channel, target)
       .catch(() => {
         stream.shamefullySendError(new Error(`Invalid channel: ${channel}`))
@@ -79,21 +93,39 @@ export class RxIpc {
 
 class MyProducer implements Producer<any> {
   private ipcListener: any | null = null
+  // private lastData: any | null = null
 
-  constructor(private ipc: Electron.IpcRenderer | Electron.IpcMain, private channel: string) {
+  constructor(private ipc: Electron.IpcRenderer | Electron.IpcMain, private channel: string, private applicator: Applicator | null | undefined) {
   }
 
   start(listener: Listener<any>) {
-    this.ipc.on(this.channel, function ipcListener(event: any, type: string, data: any) {
+    this.ipc.on(this.channel, (event: any, type: MessageType, data: any) => {
       switch (type) {
-        case "n":
+        case MessageType.INIT:
+          // this.lastData = clone(data)
           listener.next(data)
           break
-        case "e":
+
+        case MessageType.UPDATE:
+          const applicator = this.applicator
+          if (applicator == null) {
+            throw new Error("Not implemented")
+          }
+          else {
+            applicator.applyChanges(data)
+          }
+          break
+
+        case MessageType.ERROR:
           listener.error(data)
           break
-        case "c":
+
+        case MessageType.COMPLETE:
           listener.complete()
+          break
+
+        default:
+          listener.error(new Error(`Unknown message type: ${type} with payload: ${data}`))
           break
       }
     })
@@ -109,18 +141,40 @@ class MyProducer implements Producer<any> {
 }
 
 class MyListener implements Listener<any> {
+  private count = 0
+  private lastData: any | null = null
+
   constructor(private replyTo: Electron.WebContents, private subChannel: string) {
   }
 
   next(data: any) {
-    this.replyTo.send(this.subChannel, "n", data)
+    const replyTo = this.replyTo
+    if (this.count === 0) {
+      replyTo.send(this.subChannel, MessageType.INIT, data)
+    }
+    else {
+      replyTo.send(this.subChannel, MessageType.UPDATE, diff(this.lastData, data))
+    }
+
+    // clone to be sure that it will be not modified because client can pass to `next` the same object reference each time
+    this.lastData = clone(data)
+    this.count++
   }
 
   error(error: any) {
-    this.replyTo.send(this.subChannel, "e", error)
+    this.replyTo.send(this.subChannel, MessageType.ERROR, error.toString())
   }
 
   complete() {
-    this.replyTo.send(this.subChannel, "c")
+    this.replyTo.send(this.subChannel, MessageType.COMPLETE)
   }
+}
+
+
+enum MessageType {
+  INIT, UPDATE, COMPLETE, ERROR
+}
+
+export interface Applicator {
+  applyChanges(changes: Array<IDiff>): void
 }

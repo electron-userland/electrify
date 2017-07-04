@@ -6,15 +6,11 @@
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
-    "build": "node .electron-vue/build.js && electron-builder",
-    "build:dir": "node .electron-vue/build.js && electron-builder --dir -c.compression=store",
-    "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
-    "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
     "dev": "node .electron-vue/dev-runner.js",
-    "pack": "yarn pack:main && yarn pack:renderer",
-    "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
-    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "vuetypes": "vuetype src/renderer",
+    "build": "node .electron-vue/build.js && electron-builder --dir -c.compression=store",
+    "build:web": "node .electron-vue/build.js --web",
+    "build:clean": "node .electron-vue/build.js --clean",
+    "dist": "yarn build && electron-builder",
     "lint": "tslint -c ./node_modules/electron-builder-tslint-config/tslint.json -p src/renderer",
     "lintAndFix": "tslint -c ./node_modules/electron-builder-tslint-config/tslint.json -p src/renderer --fix"
   },
@@ -24,18 +20,19 @@
     "appId": "build.electron.electrify"
   },
   "dependencies": {
-    "axios": "^0.16.2",
     "bluebird-lst": "^1.0.2",
+    "clone": "^2.1.1",
     "debug": "^2.6.8",
+    "deep-diff": "^0.3.8",
     "electron-debug": "^1.2.0",
     "electron-store": "^1.2.0",
-    "execa": "^0.7.0",
     "fs-extra-p": "^4.3.0",
-    "iview": "^2.0.0-rc.17",
+    "iview": "^2.0.0-rc.18",
+    "node-watch": "^0.5.5",
+    "shell-env": "^0.3.0",
     "vue": "^2.3.4",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.7.0",
-    "vuex": "^2.3.1",
     "xstream": "^10.8.0"
   },
   "devDependencies": {
@@ -46,12 +43,10 @@
     "babili-webpack-plugin": "^0.1.2",
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
-    "cross-env": "^5.0.1",
     "css-loader": "^0.28.4",
-    "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "1.7.4",
-    "electron-builder": "^19.11.1",
+    "electron-builder": "^19.13.0",
     "electron-builder-tslint-config": "^1.0.0",
     "electron-devtools-installer": "^2.2.0",
     "extract-text-webpack-plugin": "^3.0.0-beta.3",
@@ -60,7 +55,6 @@
     "html-webpack-plugin": "^2.29.0",
     "json-loader": "^0.5.4",
     "multispinner": "^0.2.1",
-    "shell-env": "^0.3.0",
     "style-loader": "^0.18.2",
     "ts-loader": "^2.2.2",
     "tslint": "^5.4.3",
@@ -71,9 +65,8 @@
     "vue-loader": "^13.0.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.4",
-    "vuetype": "^0.2.2",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0",
-    "webpack-hot-middleware": "^2.18.0"
+    "webpack-hot-middleware": "^2.18.1"
   }
 }

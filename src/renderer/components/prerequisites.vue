@@ -22,16 +22,15 @@
     </Card>
     <Card>
       <div slot="title">electron-builder
-        <Tag v-if="dependencies['electron-builder'].installed" color="green">Installed</Tag>
+        <Tag v-if="electronBuilder.installed" color="green">Installed</Tag>
         <template v-else>
           <Tag color="red">Not installed</Tag>
           Please install <a href="https://github.com/electron-userland/electron-builder/" target="_blank">electron-builder</a> locally.
         </template>
       </div>
 
-      <!-- Yes,  -->
-      <template v-if="dependencies['electron-builder'].installed">
-        Latest electron-builder version: <a href="https://github.com/electron-userland/electron-builder/releases" target="_blank">{{dependencies['electron-builder'].latest}}</a>
+      <template v-if="electronBuilder.installed">
+        Latest electron-builder version: <a href="https://github.com/electron-userland/electron-builder/releases" target="_blank">{{electronBuilder.latest}}</a>
       </template>
       <code v-else>yarn add electron-builder --dev</code>
     </Card>
@@ -41,20 +40,21 @@
 <script lang="ts">
   import Vue from "vue"
   import Component from "vue-class-component"
-  import { Listener } from "xstream"
   import { Route } from "vue-router"
-  import { getInfo, ProjectInfo } from "../infoManager"
+  import { getInfo } from "../projectInfoManager"
+  import { ProjectInfo } from "../../common/projectInfo"
 
   @Component
   export default class Prerequisites extends Vue {
     yarn = false
+    electronBuilder = {}
     dependencies = {}
 
     beforeRouteEnter(to: Route, from: Route, next: Function) {
       // catch before then to not handle error in the then handler
       getInfo()
         .catch(error => next(error))
-        .then((it: ProjectInfo) => next(vm => Object.assign(vm, it.prerequisites)))
+        .then((it: ProjectInfo) => next((vm: any) => Object.assign(vm, it.prerequisites)))
     }
   }
 </script>

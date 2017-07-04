@@ -42,7 +42,7 @@
       }
     },
     methods: {
-      onMenuSelect(path) {
+      onMenuSelect(path: string) {
         router.push(`/project/${path}`)
       }
     },

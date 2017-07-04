@@ -3,33 +3,43 @@
 process.env.NODE_ENV = 'production'
 
 const chalk = require('chalk')
-const del = require('del')
+const fs = require('fs-extra')
 const webpack = require('webpack')
 const Multispinner = require('multispinner')
 
+const path = require('path')
+const webpackConfigurator = require("./webpackConfigurator")
+
+function main() {
+  for (let i = 2; i < process.argv.length; i++) {
+    switch (process.argv[i]) {
+      case '--clean':
+        fs.remove('dist')
+        return
+
+      case '--web':
+        web()
+        return
+
+      case '--pack':
+        build()
+        return
+    }
+  }
+
+  build()
+}
 
 const mainConfig = require('./webpack.main.config')
 const rendererConfig = require('./webpack.renderer.config')
 const webConfig = require('./webpack.web.config')
 
-const doneLog = chalk.bgGreen.white(' DONE ') + ' '
 const errorLog = chalk.bgRed.white(' ERROR ') + ' '
-const okayLog = chalk.bgBlue.white(' OKAY ') + ' '
 
-if (process.env.BUILD_TARGET === 'clean') clean()
-else if (process.env.BUILD_TARGET === 'web') web()
-else build()
-
-function clean () {
-  del.sync(['build/*', '!build/icons', '!build/icons/icon.*'])
-  console.log(`\n${doneLog}\n`)
-  process.exit()
-}
+main()
 
 function build () {
-  greeting()
-
-  del.sync(['dist/electron/*', '!.gitkeep'])
+  fs.removeSync('dist/electron')
 
   const tasks = ['main', 'renderer']
   const m = new Multispinner(tasks, {
@@ -42,29 +52,24 @@ function build () {
   m.on('success', () => {
     process.stdout.write('\x1B[2J\x1B[0f')
     console.log(`\n\n${results}`)
-    console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
-    process.exit()
   })
 
-  pack(mainConfig).then(result => {
-    results += result + '\n\n'
-    m.success('main')
-  }).catch(err => {
-    m.error('main')
-    console.log(`\n  ${errorLog}failed to build main process`)
-    console.error(`\n${err}\n`)
-    process.exit(1)
-  })
+  function handle(promise, type) {
+    promise
+      .then(result => {
+        results += result + '\n\n'
+        m.success(type)
+      })
+      .catch(error => {
+        m.error(type)
+        console.log(`\n  ${errorLog}failed to build ${type} process`)
+        console.error(`\n${error}\n`)
+        process.exit(1)
+      })
+  }
 
-  pack(rendererConfig).then(result => {
-    results += result + '\n\n'
-    m.success('renderer')
-  }).catch(err => {
-    m.error('renderer')
-    console.log(`\n  ${errorLog}failed to build renderer process`)
-    console.error(`\n${err}\n`)
-    process.exit(1)
-  })
+  handle(pack(mainConfig), "main")
+  handle(pack(rendererConfig), "renderer")
 }
 
 function pack (config) {
@@ -95,7 +100,7 @@ function pack (config) {
 }
 
 function web () {
-  del.sync(['dist/web/*', '!.gitkeep'])
+  fs.removeSync('dist/web')
   webpack(webConfig, (err, stats) => {
     if (err || stats.hasErrors()) console.log(err)
 
@@ -106,9 +111,4 @@ function web () {
 
     process.exit()
   })
-}
-
-function greeting () {
-  console.log(chalk.yellow.bold('\n  lets-build'))
-  console.log()
 }

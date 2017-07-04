@@ -2,13 +2,16 @@
   <dictionary name="develar">
     <words>
       <w>axios</w>
+      <w>babili</w>
       <w>deduplication</w>
       <w>devtool</w>
       <w>devtools</w>
       <w>devtron</w>
       <w>esnext</w>
+      <w>imgs</w>
       <w>iview</w>
       <w>minify</w>
+      <w>nosources</w>
       <w>onshape</w>
       <w>transpile</w>
       <w>unsubscribe</w>

@@ -23,7 +23,7 @@
   export default {
     name: "Electrify",
     methods: {
-      onMenuSelect(path) {
+      onMenuSelect(path: string) {
         router.push(`/${path}`)
       }
     },

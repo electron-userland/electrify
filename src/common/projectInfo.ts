@@ -1,5 +1,6 @@
 export interface ProjectInfoPrerequisites {
   yarn: boolean
+  electronBuilder: any
   dependencies: { [name: string]: any}
 }
 

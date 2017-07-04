@@ -1,21 +1,16 @@
 import Vue from "vue"
-import axios from "axios"
 import App from "./App.vue"
-import router from "./router"
-import store from "./store"
 import "./initIView"
+import router from "./router"
 
 if (!process.env.IS_WEB) {
   Vue.use(require("vue-electron"))
 }
 
-// noinspection JSUnusedGlobalSymbols
-(Vue as any).http = (Vue as any).prototype.$http = axios
 Vue.config.productionTip = false
 
 new Vue({
-  components: {App},
+  components: { App },
   router,
-  store,
   template: "<App/>"
 }).$mount("#app")

@@ -1,7 +1,6 @@
 'use strict'
 
 const chalk = require('chalk')
-const electron = require('electron')
 const path = require('path')
 const { spawn } = require('child_process')
 const webpack = require('webpack')
@@ -9,11 +8,20 @@ const WebpackDevServer = require('webpack-dev-server')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
 const mainConfig = require('./webpack.main.config')
+mainConfig.entry.main = [path.join(__dirname, '../src/main/index.dev.ts')].concat(mainConfig.entry.main)
+
 const rendererConfig = require('./webpack.renderer.config')
+rendererConfig.entry.renderer = [path.join(__dirname, 'dev-client')].concat(rendererConfig.entry.renderer)
 
 let electronProcess = null
 let manualRestart = false
-let hotMiddleware
+
+const rendererCompiler = webpack(rendererConfig)
+const hotMiddleware = webpackHotMiddleware(rendererCompiler, {
+  log: false,
+  heartbeat: 2500
+})
+
 
 function logStats (proc, data) {
   let log = ''
@@ -39,35 +47,25 @@ function logStats (proc, data) {
 
 function startRenderer () {
   return new Promise((resolve, reject) => {
-    rendererConfig.entry.renderer = [path.join(__dirname, 'dev-client')].concat(rendererConfig.entry.renderer)
-
-    const compiler = webpack(rendererConfig)
-    hotMiddleware = webpackHotMiddleware(compiler, { 
-      log: false, 
-      heartbeat: 2500 
-    })
-
-    compiler.plugin('compilation', compilation => {
+    rendererCompiler.plugin('compilation', compilation => {
       compilation.plugin('html-webpack-plugin-after-emit', (data, cb) => {
         hotMiddleware.publish({ action: 'reload' })
         cb()
       })
     })
 
-    compiler.plugin('done', stats => {
+    rendererCompiler.plugin('done', stats => {
       logStats('Renderer', stats)
     })
 
     const server = new WebpackDevServer(
-      compiler,
+      rendererCompiler,
       {
         contentBase: path.join(__dirname, '../'),
         quiet: true,
         setup (app, ctx) {
           app.use(hotMiddleware)
-          ctx.middleware.waitUntilValid(() => {
-            resolve()
-          })
+          ctx.middleware.waitUntilValid(resolve)
         }
       }
     )
@@ -78,10 +76,7 @@ function startRenderer () {
 
 function startMain () {
   return new Promise((resolve, reject) => {
-    mainConfig.entry.main = [path.join(__dirname, '../src/main/index.dev.ts')].concat(mainConfig.entry.main)
-
     const compiler = webpack(mainConfig)
-
     compiler.plugin('watch-run', (compilation, done) => {
       logStats('Main', chalk.white.bold('compiling...'))
       hotMiddleware.publish({ action: 'compiling' })
@@ -90,7 +85,7 @@ function startMain () {
 
     compiler.watch({}, (err, stats) => {
       if (err) {
-        console.log(err)
+        reject(err)
         return
       }
 
@@ -113,7 +108,11 @@ function startMain () {
 }
 
 function startElectron () {
-  electronProcess = spawn(electron, ['--inspect=5858', path.join(__dirname, '../dist/electron/main.js')])
+  const args = ['--inspect=5858', path.join(__dirname, '../dist/electron/main.js')]
+  if (process.env.IJ) {
+    args.push("--debug-brk")
+  }
+  electronProcess = spawn(require('electron').toString(), args)
 
   electronProcess.stdout.on('data', data => {
     electronLog(data, 'blue')
@@ -151,10 +150,8 @@ function greeting () {
 function init () {
   greeting()
 
-  Promise.all([startRenderer(), startMain()])
-    .then(() => {
-      startElectron()
-    })
+  Promise.all([startMain(), startRenderer()])
+    .then(() => startElectron())
     .catch(err => {
       console.error(err)
     })

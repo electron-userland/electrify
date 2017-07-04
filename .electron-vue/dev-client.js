@@ -5,6 +5,7 @@ hotClient.subscribe(event => {
    * Reload browser when HTMLWebpackPlugin emits a new index.html
    */
   if (event.action === 'reload') {
+    console.log("Reload on event")
     window.location.reload()
   }
 
