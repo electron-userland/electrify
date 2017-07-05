@@ -1,8 +1,8 @@
-<style scoped>
-  .ivu-card {
-    margin-bottom: 10px
-  }
-</style>
+<!--<style scoped>-->
+  <!--.ivu-card {-->
+    <!--margin-bottom: 10px-->
+  <!--}-->
+<!--</style>-->
 <template>
   <div>
     <Card>

@@ -18,7 +18,7 @@ export function computePrerequisites(data: ProjectInfo, projectDir: string, meta
 
 export function applyMetadata(data: ProjectInfo, metadata: any, latestElectronBuilderVersion: string) {
   const deps = metadata.devDependencies
-  let result = {installed: false, latest: latestElectronBuilderVersion}
+  const result = {installed: false, latest: latestElectronBuilderVersion}
   if (deps != null) {
     const electronBuilderVersion = deps["electron-builder"]
     if (electronBuilderVersion != null) {
@@ -30,7 +30,7 @@ export function applyMetadata(data: ProjectInfo, metadata: any, latestElectronBu
 
 export function getYarnVersion(workingDir: string): Promise<boolean> {
   return bashEnv.value
-    .then(env => new BluebirdPromise(function (resolve, reject) {
+    .then(env => new BluebirdPromise((resolve, reject) => {
       execFile("yarn", ["--version"], {env, cwd: workingDir}, (error, stdout) => {
         if (error == null) {
           resolve(stdout)
@@ -52,7 +52,7 @@ export function getYarnVersion(workingDir: string): Promise<boolean> {
 }
 
 export function getLatestElectronBuilderVersion() {
-  return new BluebirdPromise(function (resolve, reject) {
+  return new BluebirdPromise((resolve, reject) => {
     const request = net.request({
       protocol: "https:",
       hostname: "github.com",
@@ -65,7 +65,7 @@ export function getLatestElectronBuilderVersion() {
       try {
         let data = ""
         response.on("error", reject)
-        response.on("data", (chunk) => {
+        response.on("data", chunk => {
           data += chunk
         })
         response.on("end", () => {

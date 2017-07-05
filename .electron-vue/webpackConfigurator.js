@@ -3,7 +3,8 @@
 const fs = require("fs")
 const path = require("path")
 const webpack = require("webpack")
-
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { dependencies } = require('../package.json')
 
 /**
@@ -13,18 +14,21 @@ const { dependencies } = require('../package.json')
  * @param config
  * @returns any
  */
-function configure(entryFile, type, whiteListedModules, config) {
+function configure(type, config, whiteListedModules) {
+  if (config == null) {
+    config = {}
+  }
+
   process.env.BABEL_ENV = type
 
+  const isTest = type === "test"
   const isProduction = process.env.NODE_ENV === "production"
+  const isDevBuild = isTest || !isProduction
 
   config.devtool = isProduction ? "nosources-source-map" : "eval-source-map"
 
   Object.assign(config, {
-    entry: {
-      [type]: entryFile,
-    },
-    externals: Object.keys(dependencies || {}).filter(it => whiteListedModules == null || !whiteListedModules.has(it)),
+    externals: Object.keys(dependencies || {}).filter(it => whiteListedModules == null || !whiteListedModules.has(it)).concat("electron"),
     node: {
       __dirname: !isProduction,
       __filename: !isProduction,
@@ -32,10 +36,17 @@ function configure(entryFile, type, whiteListedModules, config) {
     output: {
       filename: "[name].js",
       libraryTarget: "commonjs2",
-      path: path.join(__dirname, '../dist/electron')
+      path: path.join(__dirname, "../dist", isTest ? "test" : "electron")
     },
-    target: `electron-${type}`,
+    target: isTest ? "node" : `electron-${type}`,
   })
+
+  const srcDir = path.join(__dirname, "../src", type)
+  if (config.entry == null) {
+    config.entry = {
+      [type]: path.join(srcDir, "index.ts"),
+    }
+  }
 
   const plugins = getPlugins(config)
 
@@ -50,8 +61,8 @@ function configure(entryFile, type, whiteListedModules, config) {
     extensions.push(".ts")
 
     // no sense to use fork-ts-checker-webpack-plugin for production build
-    if (!isProduction) {
-      plugins.push(new ForkTsCheckerWebpackPlugin({tsconfig: path.join(path.dirname(entryFile), "tsconfig.json")}))
+    if (!isProduction && !isTest) {
+      plugins.push(new ForkTsCheckerWebpackPlugin({tsconfig: path.join(srcDir, "tsconfig.json")}))
     }
 
     config.module.rules.push({
@@ -62,8 +73,7 @@ function configure(entryFile, type, whiteListedModules, config) {
           loader: "ts-loader",
           options: {
             // use transpileOnly mode to speed-up compilation
-            transpileOnly: !isProduction,
-
+            transpileOnly: isDevBuild,
             appendTsSuffixTo: [/\.vue$/],
           }
         },
@@ -82,7 +92,7 @@ function configure(entryFile, type, whiteListedModules, config) {
     use: "node-loader"
   })
 
-  if (isProduction) {
+  if (!isDevBuild) {
     const BabiliWebpackPlugin = require("babili-webpack-plugin")
     plugins.push(new BabiliWebpackPlugin({
       // removeConsole: true,
@@ -103,6 +113,7 @@ function configure(entryFile, type, whiteListedModules, config) {
     }
   }
 
+  plugins.push(new webpack.optimize.ModuleConcatenationPlugin())
   plugins.push(new webpack.NoEmitOnErrorsPlugin())
 
   // console.log(`\n\n${type} config:` + JSON.stringify(config, null, 2) + "\n\n")
@@ -133,6 +144,83 @@ function getExtensions(config) {
 
   extensions.push(".js", ".node", ".json")
   return extensions
+}
+
+const rendererBaseConfig = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
+      },
+      {
+        test: /\.html$/,
+        use: 'vue-html-loader'
+      },
+      {
+        test: /\.vue$/,
+        use: {
+          loader: 'vue-loader',
+          options: {
+            extractCSS: process.env.NODE_ENV === 'production',
+            loaders: {
+              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
+              scss: 'vue-style-loader!css-loader!sass-loader',
+            }
+          }
+        }
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        use: {
+          loader: 'url-loader',
+          query: {
+            limit: 10000,
+            name: 'imgs/[name].[ext]'
+          }
+        }
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        use: {
+          loader: 'url-loader',
+          query: {
+            limit: 10000,
+            name: 'fonts/[name].[ext]'
+          }
+        }
+      }
+    ]
+  },
+  plugins: [
+    new ExtractTextPlugin('styles.css'),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: path.resolve(__dirname, '../src/index.ejs'),
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true
+      },
+      nodeModules: process.env.NODE_ENV !== 'production'
+        ? path.resolve(__dirname, '../node_modules')
+        : false
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': path.join(__dirname, '../src/renderer'),
+      'vue$': 'vue/dist/vue.esm.js'
+    },
+    extensions: ['.vue', '.css']
+  },
+}
+
+module.exports.getRendererBaseConfig = function () {
+  return require("clone")(rendererBaseConfig)
 }
 
 module.exports.configure = configure

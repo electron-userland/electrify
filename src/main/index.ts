@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell } from "electron"
 import xstream from "xstream"
 import rxIpc from "../rx-ipc/main"
 import { ProjectInfoProducer } from "./ProjectInfoProducer"
-import { Project, StoreManager, windowToProject } from "./store"
+import { Project, StoreManager } from "./store"
 
 // to debug packed app as well
 require("electron-debug")({enabled: true})
@@ -11,7 +11,7 @@ const isDev = process.env.NODE_ENV === "development"
 
 // set `__static` path to static files in production
 if (!isDev) {
-  (<any>global).__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
+  (global as any).__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
 }
 
 const winURL = isDev ? `http://localhost:9080` : `file://${__dirname}/index.html`
@@ -31,7 +31,7 @@ app.once("ready", () => {
   }
 
   app.on("activate", () => {
-    if (windowToProject.size === 0) {
+    if (!storeManager.isSomeProjectOpened) {
       createWindow(null, storeManager)
     }
   })

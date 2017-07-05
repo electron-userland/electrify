@@ -6,7 +6,7 @@ import * as path from "path"
 import { Listener, Producer } from "xstream"
 import { ProjectInfo } from "../common/projectInfo"
 import { computePrerequisites } from "./lint/prerequisites"
-import { StoreManager, windowToProject } from "./store"
+import { StoreManager } from "./store"
 
 const watch = require("node-watch")
 
@@ -43,8 +43,8 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
   }
 
   private async doStart(): Promise<ProjectInfo> {
-    const projectState = windowToProject.get(this.window)
-    let projectDir = projectState == null ? null : projectState.path
+    const project = this.storeManager.getProject(this.window)
+    let projectDir = project == null ? null : project.path
     if (projectDir != null && !(await validateProjectDir(projectDir))) {
       projectDir = null
     }
@@ -79,7 +79,7 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
           this.computeProjectInfo(projectDir)
             .then(it => {
               this.watchProjectPackageFile(path.join(projectDir, "package.json"))
-              return it
+              resolve(it)
             })
             .catch(reject)
         })

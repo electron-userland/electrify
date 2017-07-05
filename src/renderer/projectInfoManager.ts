@@ -1,12 +1,12 @@
 import BluebirdPromise from "bluebird-lst"
 import { IDiff } from "deep-diff"
+import { ipcRenderer } from "electron"
 import iview from "iview"
 import Vue from "vue"
 import { Listener } from "xstream"
 import { ProjectInfo } from "../common/projectInfo"
 import { Lazy } from "../main/util"
-import rxIpc from "../rx-ipc/renderer"
-import { Applicator } from "../rx-ipc/rx-ipc"
+import { Applicator, RxIpc } from "../rx-ipc/rx-ipc"
 
 class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
   constructor(private resolve: ((data: ProjectInfo) => void) | null, private reject: ((error: Error | any) => void) | null) {
@@ -17,7 +17,7 @@ class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
     for (const change of changes) {
       let it: any = info!
       let i = -1
-      let last = change.path ? change.path.length - 1 : 0
+      const last = change.path ? change.path.length - 1 : 0
       while (++i < last) {
         if (typeof it[change.path[i]] === "undefined") {
           Vue.set(it, change.path[i], (typeof change.path[i] === "number") ? [] : {})
@@ -68,14 +68,15 @@ class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
   }
 
   complete(): void {
+    // ignored
   }
 }
 
 let info: ProjectInfo | null = null
 
-const subscription = new Lazy<ProjectInfo>(() => new BluebirdPromise<ProjectInfo>(function (resolve, reject) {
+const subscription = new Lazy<ProjectInfo>(() => new BluebirdPromise<ProjectInfo>((resolve, reject) => {
   const listener = new ProjectInfoListener(resolve, reject)
-  rxIpc.runCommand<ProjectInfo>("toolStatus", null, null, listener)
+  new RxIpc(ipcRenderer).runCommand<ProjectInfo>("toolStatus", null, null, listener)
     .subscribe(listener)
 }))
 
@@ -90,7 +91,7 @@ function applyArrayChange(array: Array<string>, index: number, change: IDiff): v
   if (change.path && change.path.length) {
     let it: any = array[index]
     let i = 0
-    let u = change.path.length - 1
+    const u = change.path.length - 1
     for (; i < u; i++) {
       it = it[change.path[i]]
     }
@@ -113,7 +114,7 @@ function applyArrayChange(array: Array<string>, index: number, change: IDiff): v
   else {
     switch (change.kind) {
       case "A":
-        applyArrayChange(<any>array[index], change.index!, change.item!)
+        applyArrayChange(array[index] as any, change.index!, change.item!)
         break
 
       case "D":

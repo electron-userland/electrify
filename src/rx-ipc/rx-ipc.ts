@@ -10,12 +10,12 @@ export type ObservableFactory = (webContents: Electron.WebContents, args?: Array
 export class RxIpc {
   static listenerCount = 0
 
-  listeners: { [id: string]: boolean } = {}
+  private listeners = new Set<string>()
 
   constructor(private ipc: Electron.IpcRenderer | Electron.IpcMain) {
     // respond to checks if a listener is registered
     this.ipc.on("rx-ipc-check-listener", (event: any, channel: string) => {
-      event.sender.send(`rx-ipc-check-reply:${channel}`, this.listeners[channel] != null)
+      event.sender.send(`rx-ipc-check-reply:${channel}`, this.listeners.has(channel))
     })
   }
 
@@ -33,25 +33,26 @@ export class RxIpc {
     })
   }
 
+  // noinspection JSUnusedGlobalSymbols
   cleanUp() {
     (this.ipc as Electron.EventEmitter).removeAllListeners("rx-ipc-check-listener")
-    Object.keys(this.listeners).forEach(channel => {
+    for (const channel of Object.keys(this.listeners)) {
       this.removeListeners(channel)
-    })
+    }
   }
 
   registerListener(channel: string, observableFactory: ObservableFactory): void {
-    if (this.listeners[channel]) {
+    if (this.listeners.has(channel)) {
       throw new Error(`Channel ${channel} already registered`)
     }
 
-    this.listeners[channel] = true
-    this.ipc.on(channel, function (event: Electron.Event, subChannel: string, ...args: Array<any>) {
+    this.listeners.add(channel)
+    this.ipc.on(channel, (event: Electron.Event, subChannel: string, ...args: Array<any>) => {
       debug(`Subscribe ${subChannel} to ${channel}`)
       try {
         const observable = observableFactory(event.sender, args)
         const subscription = observable.subscribe(new MyListener(event.sender, subChannel))
-        event.sender.on("destroyed", function () {
+        event.sender.on("destroyed", () => {
           debug(`Unsubscribe ${subChannel} from ${channel} on web contents destroyed`)
           subscription.unsubscribe()
         })
@@ -64,7 +65,7 @@ export class RxIpc {
 
   removeListeners(channel: string) {
     (this.ipc as Electron.EventEmitter).removeAllListeners(channel)
-    delete this.listeners[channel]
+    this.listeners.delete(channel)
   }
 
   runCommand<T>(channel: string, receiver: Electron.IpcRenderer | Electron.WebContents | null = null, args?: Array<any> | null, applicator?: Applicator): Stream<T> {
@@ -132,7 +133,7 @@ class MyProducer implements Producer<any> {
   }
 
   stop() {
-    let listener = this.ipcListener
+    const listener = this.ipcListener
     if (listener != null) {
       this.ipc.removeListener(this.channel, listener)
       this.ipcListener = null
@@ -169,7 +170,6 @@ class MyListener implements Listener<any> {
     this.replyTo.send(this.subChannel, MessageType.COMPLETE)
   }
 }
-
 
 enum MessageType {
   INIT, UPDATE, COMPLETE, ERROR

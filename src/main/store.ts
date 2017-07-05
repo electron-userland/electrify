@@ -2,8 +2,6 @@ import { app } from "electron"
 import * as os from "os"
 import * as path from "path"
 
-export const windowToProject = new Map<Electron.BrowserWindow, Project | null>()
-
 export interface Project {
   path: string
 }
@@ -24,23 +22,39 @@ function createStore() {
 
 export class StoreManager {
   private readonly store = createStore()
+  private isSaveOnWindowClose = true
+
+  private readonly windowToProject = new Map<Electron.BrowserWindow, Project | null>()
 
   constructor() {
-    app.once("quit", () => this.save())
+    app.on("before-quit", () => {
+      this.save()
+      this.isSaveOnWindowClose = false
+    })
+  }
+
+  get isSomeProjectOpened() {
+    return this.windowToProject.size > 0
+  }
+
+  getProject(window: Electron.BrowserWindow) {
+    return this.windowToProject.get(window)
   }
 
   private save() {
-    this.store.set("projects", Array.from(windowToProject.values()).filter(it => it != null))
+    this.store.set("projects", Array.from(this.windowToProject.values()).filter(it => it != null))
   }
 
   addProject(project: Project, window: Electron.BrowserWindow, isSave = true) {
-    const isAddWindowListener = !windowToProject.has(window)
-    windowToProject.set(window, project)
+    const isAddWindowListener = !this.windowToProject.has(window)
+    this.windowToProject.set(window, project)
 
     if (isAddWindowListener) {
       window.once("closed", () => {
-        windowToProject.delete(window)
-        this.save()
+        this.windowToProject.delete(window)
+        if (this.isSaveOnWindowClose) {
+          this.save()
+        }
       })
     }
 
@@ -50,7 +64,7 @@ export class StoreManager {
   }
 
   getProjects(): Array<Project> {
-    let result: Array<Project> = this.store.get("projects")
+    const result: Array<Project> = this.store.get("projects")
     if (result == null) {
       return []
     }

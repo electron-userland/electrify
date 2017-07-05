@@ -21,6 +21,10 @@ function main() {
         web()
         return
 
+      case '--test':
+        build(true)
+        return
+
       case '--pack':
         build()
         return
@@ -30,18 +34,19 @@ function main() {
   build()
 }
 
-const mainConfig = require('./webpack.main.config')
-const rendererConfig = require('./webpack.renderer.config')
-const webConfig = require('./webpack.web.config')
-
 const errorLog = chalk.bgRed.white(' ERROR ') + ' '
 
 main()
 
-function build () {
+function build(isTest) {
   fs.removeSync('dist/electron')
 
   const tasks = ['main', 'renderer']
+
+  if (isTest) {
+    tasks.push("test")
+  }
+
   const m = new Multispinner(tasks, {
     preText: 'building',
     postText: 'process'
@@ -68,8 +73,12 @@ function build () {
       })
   }
 
-  handle(pack(mainConfig), "main")
-  handle(pack(rendererConfig), "renderer")
+  handle(pack(require('./webpack.main.config')), "main")
+  handle(pack(require('./webpack.renderer.config')), "renderer")
+  if (isTest) {
+    fs.removeSync('dist/test')
+    handle(pack(require('./webpack.test.config')))
+  }
 }
 
 function pack (config) {
@@ -101,7 +110,7 @@ function pack (config) {
 
 function web () {
   fs.removeSync('dist/web')
-  webpack(webConfig, (err, stats) => {
+  webpack(require('./webpack.web.config'), (err, stats) => {
     if (err || stats.hasErrors()) console.log(err)
 
     console.log(stats.toString({
