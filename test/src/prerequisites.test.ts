@@ -1,6 +1,7 @@
 import Vue from "vue"
 
-const v: typeof Vue = require("vue/dist/vue.js")
+const c = require("/Users/develar/Documents/electrify/dist/test/prerequisites.js")
+const v: typeof Vue = c.Vue
 
 const doTest = (Component: any) => {
   const vm = new v({
@@ -14,7 +15,7 @@ const doTest = (Component: any) => {
 
 describe("preprocessor", () => {
   it("should process a `.vue` file", () => {
-    const component = require("../../dist/electron/prerequisites.js").default
+    const component = c.prerequisites
     doTest(component)
   })
 })

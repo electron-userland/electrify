@@ -1,8 +1,8 @@
-<!--<style scoped>-->
-  <!--.ivu-card {-->
-    <!--margin-bottom: 10px-->
-  <!--}-->
-<!--</style>-->
+<style scoped>
+  .ivu-card {
+    margin-bottom: 10px
+  }
+</style>
 <template>
   <div>
     <Card>
@@ -37,24 +37,4 @@
   </div>
 </template>
 
-<script lang="ts">
-  import Vue from "vue"
-  import Component from "vue-class-component"
-  import { Route } from "vue-router"
-  import { getInfo } from "../projectInfoManager"
-  import { ProjectInfo } from "../../common/projectInfo"
-
-  @Component
-  export default class Prerequisites extends Vue {
-    yarn = false
-    electronBuilder = {}
-    dependencies = {}
-
-    beforeRouteEnter(to: Route, from: Route, next: Function) {
-      // catch before then to not handle error in the then handler
-      getInfo()
-        .catch(error => next(error))
-        .then((it: ProjectInfo) => next((vm: any) => Object.assign(vm, it.prerequisites)))
-    }
-  }
-</script>
+<script lang="ts" src="./prerequisites.ts"></script>

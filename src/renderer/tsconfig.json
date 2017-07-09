@@ -1,8 +1,7 @@
 {
   "extends": "../tsconfig-base.json",
   "compilerOptions": {
-    "allowJs": true,
     "module": "esnext"
   },
-  "include": ["**/*.ts", "*.d.ts", "../rx-ipc/*.ts", "../common/*.ts"]
+  "include": ["**/*.ts", "vue-shims.d.ts", "../rx-ipc/*.ts", "../common/*.ts"]
 }

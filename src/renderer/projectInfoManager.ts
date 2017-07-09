@@ -1,7 +1,8 @@
 import BluebirdPromise from "bluebird-lst"
 import { IDiff } from "deep-diff"
 import { ipcRenderer } from "electron"
-import iview from "iview"
+// import loadingBar from "iview/src/components/loading-bar"
+import { LoadingBar } from "iview"
 import Vue from "vue"
 import { Listener } from "xstream"
 import { ProjectInfo } from "../common/projectInfo"
@@ -10,7 +11,7 @@ import { Applicator, RxIpc } from "../rx-ipc/rx-ipc"
 
 class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
   constructor(private resolve: ((data: ProjectInfo) => void) | null, private reject: ((error: Error | any) => void) | null) {
-    iview.LoadingBar.start()
+    LoadingBar.start()
   }
 
   applyChanges(changes: Array<IDiff>): void {
@@ -48,7 +49,7 @@ class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
     }
     else {
       info = data
-      iview.LoadingBar.finish()
+      LoadingBar.finish()
       this.resolve = null
       resolve(data)
     }
@@ -60,7 +61,7 @@ class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
       console.error()
     }
     else {
-      iview.LoadingBar.finish()
+      LoadingBar.finish()
       this.reject = null
       console.error(error)
       reject(error instanceof Error ? error : new Error(error))

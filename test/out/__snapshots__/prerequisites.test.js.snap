@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`preprocessor should process a \`.vue\` file 1`] = `
+<div
+  data-v-4b438cd1=""
+>
+  <div
+    data-v-4b438cd1=""
+    class="ivu-card ivu-card-bordered"
+  >
+    <div
+      class="ivu-card-head"
+    >
+      <div
+        data-v-4b438cd1=""
+      >
+        yarn
+        <a
+          data-v-4b438cd1=""
+          href="https://yarnpkg.com/en/docs/install/"
+          target="_blank"
+        >
+          <div
+            data-v-4b438cd1=""
+            class="ivu-tag ivu-tag-yellow"
+          >
+            <!--  -->
+            <span
+              class="ivu-tag-text"
+            >
+              Not installed
+            </span>
+            <!--  -->
+          </div>
+        </a>
+        Please 
+        <a
+          data-v-4b438cd1=""
+          href="https://yarnpkg.com/en/docs/install/"
+          target="_blank"
+        >
+          install.
+        </a>
+      </div>
+    </div>
+    <div
+      class="ivu-card-extra"
+    />
+    <div
+      class="ivu-card-body"
+    >
+      <p
+        data-v-4b438cd1=""
+      >
+        <a
+          data-v-4b438cd1=""
+          href="https://yarnpkg.com/"
+          target="_blank"
+        >
+          Yarn
+        </a>
+        offers fast and reliable build, with reduced application size.
+      </p>
+      <ul
+        data-v-4b438cd1=""
+      >
+        <li
+          data-v-4b438cd1=""
+        >
+          -  npm is unreliable and slow,
+        </li>
+        <li
+          data-v-4b438cd1=""
+        >
+          -  npm doesn't produce ideal dependency tree,
+        </li>
+        <li
+          data-v-4b438cd1=""
+        >
+          -  npm doesn't perform automatic deduplication and cleaning.
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div
+    data-v-4b438cd1=""
+    class="ivu-card ivu-card-bordered"
+  >
+    <div
+      class="ivu-card-head"
+    >
+      <div
+        data-v-4b438cd1=""
+      >
+        electron-builder
+        <div
+          data-v-4b438cd1=""
+          class="ivu-tag ivu-tag-red"
+        >
+          <!--  -->
+          <span
+            class="ivu-tag-text"
+          >
+            Not installed
+          </span>
+          <!--  -->
+        </div>
+        Please install 
+        <a
+          data-v-4b438cd1=""
+          href="https://github.com/electron-userland/electron-builder/"
+          target="_blank"
+        >
+          electron-builder
+        </a>
+        locally.
+      </div>
+    </div>
+    <div
+      class="ivu-card-extra"
+    />
+    <div
+      class="ivu-card-body"
+    >
+      <code
+        data-v-4b438cd1=""
+      >
+        yarn add electron-builder --dev
+      </code>
+    </div>
+  </div>
+</div>
+`;
