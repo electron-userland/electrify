@@ -15,6 +15,7 @@ declare module "iview" {
 }
 
 declare module "iview/src/components/grid" {
+
   export const Row: PluginObject<any>
   export const Col: PluginObject<any>
 }
@@ -34,4 +35,13 @@ declare module "iview/src/components/loading-bar" {
 declare module "iview/src/locale/lang/en-US" {
   const data: any
   export default data
+}
+
+declare module "iview/src/locale" {
+  interface LocaleManager {
+    use(locale: any): void
+  }
+
+  const localeManager: LocaleManager
+  export default localeManager
 }

@@ -85,8 +85,8 @@ ajv@^4.9.1:
     json-stable-stringify "^1.0.1"
 
 ajv@^5.0.0, ajv@^5.1.5, ajv@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.2.1.tgz#dcd03045175883ba1b636e5ae9ec3df9ab85323a"
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.2.2.tgz#47c68d69e86f5d953103b0074a9430dc63da5e39"
   dependencies:
     co "^4.6.0"
     fast-deep-equal "^1.0.0"
@@ -1192,9 +1192,9 @@ builtin-status-codes@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
 
-bytes@2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/bytes/-/bytes-2.3.0.tgz#d5b680a165b6201739acb611542aabc2d8ceb070"
+bytes@2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/bytes/-/bytes-2.5.0.tgz#4c9423ea2d252c270c41b2bdefeff9bb6b62c06a"
 
 callsites@^2.0.0:
   version "2.0.0"
@@ -1240,12 +1240,12 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000698"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000698.tgz#623a2de3458ceca379846a8f170e7b1771c7c3a3"
+  version "1.0.30000699"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000699.tgz#5af491ab1c777561a32b43fe253d6a7071ccf979"
 
 caniuse-lite@^1.0.30000684:
-  version "1.0.30000698"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000698.tgz#8102e8978b1f36962f2a102432e4bf4eac7b6cbe"
+  version "1.0.30000699"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000699.tgz#2a187b737edaa9ebedbbb56edcb53e994eceda0c"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -1464,22 +1464,23 @@ compare-version@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/compare-version/-/compare-version-0.1.2.tgz#0162ec2d9351f5ddd59a9202cba935366a725080"
 
-compressible@~2.0.8:
+compressible@~2.0.10:
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/compressible/-/compressible-2.0.10.tgz#feda1c7f7617912732b29bf8cf26252a20b9eecd"
   dependencies:
     mime-db ">= 1.27.0 < 2"
 
 compression@^1.5.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/compression/-/compression-1.6.2.tgz#cceb121ecc9d09c52d7ad0c3350ea93ddd402bc3"
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/compression/-/compression-1.7.0.tgz#030c9f198f1643a057d776a738e922da4373012d"
   dependencies:
     accepts "~1.3.3"
-    bytes "2.3.0"
-    compressible "~2.0.8"
-    debug "~2.2.0"
+    bytes "2.5.0"
+    compressible "~2.0.10"
+    debug "2.6.8"
     on-headers "~1.0.1"
-    vary "~1.1.0"
+    safe-buffer "5.1.1"
+    vary "~1.1.1"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -1803,7 +1804,7 @@ de-indent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
 
-debug@2.2.0, debug@~2.2.0:
+debug@2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
   dependencies:
@@ -2192,9 +2193,9 @@ electron-webpack-vue@^1.0.2:
     vue-style-loader "^3.0.1"
     vue-template-compiler "^2.3.4"
 
-electron-webpack@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/electron-webpack/-/electron-webpack-0.1.1.tgz#f6cea97e52f84b5d6e9e032c9ee47316cdf62609"
+electron-webpack@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/electron-webpack/-/electron-webpack-0.2.2.tgz#7f0bae3bc5f7e90b8b7dd1826a02a4e9ec1c444e"
   dependencies:
     babel-core "^6.25.0"
     babel-loader "^7.1.1"
@@ -2204,7 +2205,7 @@ electron-webpack@0.1.1:
     chalk "^2.0.1"
     css-loader "^0.28.4"
     debug "^2.6.8"
-    extract-text-webpack-plugin "^3.0.0-rc.0"
+    extract-text-webpack-plugin "^3.0.0"
     file-loader "^0.11.2"
     fs-extra-p "^4.3.0"
     html-webpack-plugin "^2.29.0"
@@ -2213,7 +2214,28 @@ electron-webpack@0.1.1:
     source-map-support "^0.4.15"
     style-loader "^0.18.2"
     url-loader "^0.5.9"
-    webpack "^3.1.0"
+    webpack-dev-server "^2.5.1"
+
+"electron-webpack@file:/Users/develar/Documents/electron-webpack/packages/electron-webpack":
+  version "0.2.2"
+  dependencies:
+    babel-core "^6.25.0"
+    babel-loader "^7.1.1"
+    babel-preset-env "^1.6.0"
+    babili-webpack-plugin "^0.1.2"
+    bluebird-lst "^1.0.2"
+    chalk "^2.0.1"
+    css-loader "^0.28.4"
+    debug "^2.6.8"
+    extract-text-webpack-plugin "^3.0.0"
+    file-loader "^0.11.2"
+    fs-extra-p "^4.3.0"
+    html-webpack-plugin "^2.29.0"
+    json-loader "^0.5.4"
+    semver "^5.3.0"
+    source-map-support "^0.4.15"
+    style-loader "^0.18.2"
+    url-loader "^0.5.9"
     webpack-dev-server "^2.5.1"
 
 electron@1.7.4:
@@ -2510,9 +2532,9 @@ extglob@^0.3.1:
   dependencies:
     is-extglob "^1.0.0"
 
-extract-text-webpack-plugin@^3.0.0-rc.0:
-  version "3.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/extract-text-webpack-plugin/-/extract-text-webpack-plugin-3.0.0-rc.2.tgz#d891bfa401a9312e42e0cc4c41abcfb7297b91a3"
+extract-text-webpack-plugin@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/extract-text-webpack-plugin/-/extract-text-webpack-plugin-3.0.0.tgz#90caa7907bc449f335005e3ac7532b41b00de612"
   dependencies:
     async "^2.4.1"
     loader-utils "^1.1.0"
@@ -4060,8 +4082,8 @@ miller-rabin@^4.0.0:
     brorand "^1.0.1"
 
 "mime-db@>= 1.27.0 < 2":
-  version "1.28.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.28.0.tgz#fedd349be06d2865b7fc57d837c6de4f17d7ac3c"
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.29.0.tgz#48d26d235589651704ac5916ca06001914266878"
 
 mime-db@~1.27.0:
   version "1.27.0"
@@ -5326,7 +5348,7 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^2.0.0"
     inherits "^2.0.1"
 
-safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+safe-buffer@5.1.1, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
@@ -5929,8 +5951,8 @@ tslint@^5.5.0:
     tsutils "^2.5.1"
 
 tsutils@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-2.5.1.tgz#c2001390c79eec1a5ccfa7ac12d599639683e0cf"
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/tsutils/-/tsutils-2.6.0.tgz#e5e99c79a8accd3977ce18d83fdf1d235a6c2ebb"
   dependencies:
     tslib "^1.7.1"
 
@@ -6146,7 +6168,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
 
-vary@~1.1.0, vary@~1.1.1:
+vary@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.1.tgz#67535ebb694c1d52257457984665323f587e8d37"
 
@@ -6306,7 +6328,7 @@ webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.5.3"
 
-webpack@^3.1.0:
+webpack@3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.1.0.tgz#ac0675e500db835f9ab2369d29ba096f51ad0731"
   dependencies:

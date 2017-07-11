@@ -7,7 +7,8 @@
   "main": "main.js",
   "scripts": {
     "dev": "node node_modules/electron-webpack/dev-runner.js",
-    "compile": "webpack --bail --env.production --config node_modules/electron-webpack/webpack.app.config.js",
+    "dev-server": "webpack-dev-server --config node_modules/electron-webpack/webpack.renderer.config.js",
+    "compile": "webpack --env.production --progress --bail --config node_modules/electron-webpack/webpack.app.config.js",
     "dist-dir": "yarn compile && electron-builder --dir -c.compression=store -c.mac.identity=null",
     "dist": "yarn compile && electron-builder",
     "lint": "yarn lint:main && yarn lint:renderer",
@@ -20,21 +21,12 @@
     "pretest": "webpack --display minimal --config node_modules/electron-webpack/webpack.test.config.js"
   },
   "repository": "electron-userland/electrify",
-  "//": "async-validator from iview depends on babel-runtime, so, we exclude it explicitly (todo - include only used parts of iview)",
   "build": {
     "productName": "Electrify",
     "appId": "build.electron.electrify",
     "files": [
-      "!node_modules/babel-runtime{,/**/*}",
-      "!node_modules/core-js{,/**/*}",
-      "!node_modules/regenerator-runtime{,/**/*}",
       "!node_modules/deep-diff/releases{,/**/*}",
       "!node_modules/bluebird/js/browser{,/**/*}"
-    ]
-  },
-  "electronWebpack": {
-    "whiteListedModules": [
-      "iview"
     ]
   },
   "dependencies": {
@@ -45,13 +37,9 @@
     "electron-debug": "^1.2.0",
     "electron-store": "^1.2.0",
     "fs-extra-p": "^4.3.0",
-    "iview": "^2.0.0-rc.18",
     "node-watch": "^0.5.5",
     "shell-env": "^0.3.0",
     "source-map-support": "^0.4.15",
-    "vue": "^2.3.4",
-    "vue-electron": "^1.0.6",
-    "vue-router": "^2.7.0",
     "xstream": "^10.8.0"
   },
   "devDependencies": {
@@ -64,16 +52,20 @@
     "electron-builder": "^19.15.2",
     "electron-builder-tslint-config": "^1.0.3",
     "electron-devtools-installer": "^2.2.0",
-    "electron-webpack": "0.1.1",
+    "electron-webpack": "0.2.3",
     "electron-webpack-ts": "^1.0.0",
     "electron-webpack-vue": "^1.0.2",
+    "iview": "^2.0.0-rc.18",
     "jest-cli": "^20.0.4",
     "jest-environment-node-debug": "^2.0.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "tslint": "^5.5.0",
     "typescript": "^2.4.1",
-    "webpack": "^3.1.0"
+    "vue": "^2.3.4",
+    "vue-electron": "^1.0.6",
+    "vue-router": "^2.7.0",
+    "webpack": "3.1.0"
   },
   "jest": {
     "roots": [

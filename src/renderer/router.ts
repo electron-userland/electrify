@@ -16,7 +16,7 @@ export default new Router({
     {
       path: "/project",
       redirect: "/project/prerequisites",
-      component: () => import("./components/project.vue"),
+      component: () => import(/* webpackMode: "eager" */ "./components/project.vue"),
       children: [
         {
           path: "prerequisites",
@@ -24,7 +24,7 @@ export default new Router({
         },
         {
           path: "icons",
-          component: () => import("./components/icons.vue")
+          component: () => import(/* webpackMode: "eager" */ "./components/icons.vue")
         },
       ],
     },

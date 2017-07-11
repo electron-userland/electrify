@@ -1,12 +1,13 @@
-import iView from "iview"
 import "iview/dist/styles/iview.css"
-import locale from "iview/src/locale/lang/en-US"
-import Vue from "vue"
 
-// import Card from "iview/src/components/card"
-// import Tag from "iview/src/components/tag"
-// import Menu from "iview/src/components/menu"
-// import * as grid from "iview/src/components/grid"
+import Card from "iview/src/components/card"
+import * as grid from "iview/src/components/grid"
+import LoadingBar from "iview/src/components/loading-bar"
+import Menu from "iview/src/components/menu"
+import Tag from "iview/src/components/tag"
+import localeManager from "iview/src/locale"
+import enlocale from "iview/src/locale/lang/en-US"
+import Vue from "vue"
 
 // cannot make it working, include the whole css
 // import "iview/src/styles/custom.less"
@@ -24,10 +25,20 @@ import Vue from "vue"
 // import "iview/src/styles/components/tag.less"
 // import "iview/src/styles/components/loading-bar.less"
 
-const options = {locale}
-// Vue.use(grid.Row, options)
-// Vue.use(grid.Col, options)
-// Vue.use(Menu, options)
-// Vue.use(Card, options)
-// Vue.use(Tag, options)
-Vue.use(iView, options)
+localeManager.use(enlocale)
+
+const nameToComponent: any = {
+  Row: grid.Row,
+  Col: grid.Col,
+  iCol: grid.Col,
+  MenuItem: (Menu as any).Item,
+  Menu,
+  Card,
+  Tag,
+}
+
+for (const name of Object.keys(nameToComponent)) {
+  Vue.component(name, nameToComponent[name])
+}
+
+(Vue.prototype as any).$Loading = LoadingBar
