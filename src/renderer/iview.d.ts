@@ -15,9 +15,8 @@ declare module "iview" {
 }
 
 declare module "iview/src/components/grid" {
-
-  export const Row: PluginObject<any>
-  export const Col: PluginObject<any>
+  export const Row: any
+  export const Col: any
 }
 
 declare module "iview/src/components/loading-bar" {

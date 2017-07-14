@@ -6,7 +6,7 @@ import LoadingBar from "iview/src/components/loading-bar"
 import Menu from "iview/src/components/menu"
 import Tag from "iview/src/components/tag"
 import localeManager from "iview/src/locale"
-import enlocale from "iview/src/locale/lang/en-US"
+import enLocale from "iview/src/locale/lang/en-US"
 import Vue from "vue"
 
 // cannot make it working, include the whole css
@@ -25,7 +25,7 @@ import Vue from "vue"
 // import "iview/src/styles/components/tag.less"
 // import "iview/src/styles/components/loading-bar.less"
 
-localeManager.use(enlocale)
+localeManager.use(enLocale)
 
 const nameToComponent: any = {
   Row: grid.Row,
