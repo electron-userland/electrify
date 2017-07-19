@@ -5,8 +5,6 @@
  *  environment.
  */
 
-require("electron-webpack/electron-main-hmr/main-hmr")
-
 import { app } from "electron"
 
 // install vue-devtools

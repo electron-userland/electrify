@@ -2229,9 +2229,9 @@ electron-webpack-vue@^1.0.3:
     vue-style-loader "^3.0.1"
     vue-template-compiler "^2.4.1"
 
-electron-webpack@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/electron-webpack/-/electron-webpack-0.5.0.tgz#5600a83f1edb352fa0e27791893df95a3521d671"
+electron-webpack@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/electron-webpack/-/electron-webpack-0.5.1.tgz#e953116b98fb4b42b6ceb28a79861a9b0b9d763a"
   dependencies:
     "@types/webpack-env" "^1.13.0"
     add-asset-html-webpack-plugin "^2.0.1"
@@ -5040,8 +5040,8 @@ postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0
     supports-color "^3.2.3"
 
 postcss@^6.0.1:
-  version "6.0.7"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.7.tgz#6a097477c46d13d0560a817d69abc0bae549d0a0"
+  version "6.0.8"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.8.tgz#89067a9ce8b11f8a84cbc5117efc30419a0857b3"
   dependencies:
     chalk "^2.0.1"
     source-map "^0.5.6"
