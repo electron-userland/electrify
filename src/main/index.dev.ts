@@ -5,16 +5,11 @@
  *  environment.
  */
 
+require("electron-webpack/electron-main-hmr/main-hmr")
+
 import { app } from "electron"
 
-// Set environment for development
-process.env.NODE_ENV = "development"
-process.env.DEBUG = "electrify,rx-ipc"
-
-// Install `electron-debug` with `devtron`
-require("electron-debug")({showDevTools: true})
-
-// Install `vue-devtools`
+// install vue-devtools
 app.on("ready", () => {
   const installExtension = require("electron-devtools-installer")
   installExtension.default(installExtension.VUEJS_DEVTOOLS)
@@ -23,5 +18,11 @@ app.on("ready", () => {
     })
 })
 
-// Require `main` process to boot app
+module.hot.accept("./index", () => {
+  console.log("Hot reloading main module...")
+  app.removeAllListeners("ready")
+  app.removeAllListeners("window-all-closed")
+  require("./index")
+})
+
 require("./index")

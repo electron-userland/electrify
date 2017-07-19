@@ -1,21 +1,35 @@
 import BluebirdPromise from "bluebird-lst"
+import debugFactory from "debug"
 import { diff, IDiff } from "deep-diff"
 import xstream, { Listener, Producer, Stream } from "xstream"
 
 const clone = require("clone")
-const debug = require("debug")("rx-ipc")
+const debug = debugFactory("rx-ipc")
 
 export type ObservableFactory = (webContents: Electron.WebContents, args?: Array<any>) => Stream<any>
+
+class SubChannelSubscription {
+  constructor(private readonly listener: MyListener, private readonly stream: Stream<any>) {
+  }
+
+  unsubscribe() {
+    this.stream.removeListener(this.listener)
+  }
+
+  completeStream() {
+    this.stream.shamefullySendComplete()
+  }
+}
 
 export class RxIpc {
   static listenerCount = 0
 
-  private listeners = new Set<string>()
+  private readonly channelToSubscriptions = new Map<string, Map<string, SubChannelSubscription>>()
 
   constructor(private ipc: Electron.IpcRenderer | Electron.IpcMain) {
     // respond to checks if a listener is registered
     this.ipc.on("rx-ipc-check-listener", (event: any, channel: string) => {
-      event.sender.send(`rx-ipc-check-reply:${channel}`, this.listeners.has(channel))
+      event.sender.send(`rx-ipc-check-reply:${channel}`, this.channelToSubscriptions.has(channel))
     })
   }
 
@@ -33,28 +47,43 @@ export class RxIpc {
     })
   }
 
+  private get eventEmitter() {
+    return this.ipc as Electron.EventEmitter
+  }
+
   // noinspection JSUnusedGlobalSymbols
   cleanUp() {
-    (this.ipc as Electron.EventEmitter).removeAllListeners("rx-ipc-check-listener")
-    for (const channel of Object.keys(this.listeners)) {
-      this.removeListeners(channel)
+    debug("Remove all listeners and unsubscribe from all streams")
+    this.eventEmitter.removeAllListeners("rx-ipc-check-listener")
+    for (const [channel, subscriptions] of this.channelToSubscriptions) {
+      this.eventEmitter.removeAllListeners(channel)
+      for (const subscription of subscriptions.values()) {
+        subscription.completeStream()
+      }
     }
+    this.channelToSubscriptions.clear()
   }
 
   registerListener(channel: string, observableFactory: ObservableFactory): void {
-    if (this.listeners.has(channel)) {
+    if (this.channelToSubscriptions.has(channel)) {
       throw new Error(`Channel ${channel} already registered`)
     }
 
-    this.listeners.add(channel)
+    debug(`Listen ${channel}`)
+
+    const subChannelToSubscription = new Map<string, SubChannelSubscription>()
+    this.channelToSubscriptions.set(channel, subChannelToSubscription)
     this.ipc.on(channel, (event: Electron.Event, subChannel: string, ...args: Array<any>) => {
       debug(`Subscribe ${subChannel} to ${channel}`)
       try {
-        const observable = observableFactory(event.sender, args)
-        const subscription = observable.subscribe(new MyListener(event.sender, subChannel))
+        const stream = observableFactory(event.sender, args)
+        const listener = new MyListener(event.sender, subChannel)
+        stream.addListener(listener)
+        subChannelToSubscription.set(subChannel, new SubChannelSubscription(listener, stream))
         event.sender.on("destroyed", () => {
+          // this listener must be static and do not use any variable (except subChannel) from outer scope (so, on hot reload, we don't need to remove/add it again)
           debug(`Unsubscribe ${subChannel} from ${channel} on web contents destroyed`)
-          subscription.unsubscribe()
+          this.removeListener(channel, subChannel)
         })
       }
       catch (e) {
@@ -63,9 +92,19 @@ export class RxIpc {
     })
   }
 
-  removeListeners(channel: string) {
-    (this.ipc as Electron.EventEmitter).removeAllListeners(channel)
-    this.listeners.delete(channel)
+  private removeListener(channel: string, subChannel?: string) {
+    this.eventEmitter.removeAllListeners(channel)
+    const subChannelToSubscription = this.channelToSubscriptions.get(channel)
+    if (subChannelToSubscription == null) {
+      return
+    }
+
+    this.channelToSubscriptions.delete(channel)
+    for (const [key, subscription] of subChannelToSubscription) {
+      if (subChannel == null || key === subChannel) {
+        subscription.unsubscribe()
+      }
+    }
   }
 
   runCommand<T>(channel: string, receiver: Electron.IpcRenderer | Electron.WebContents | null = null, args?: Array<any> | null, applicator?: Applicator): Stream<T> {
@@ -94,7 +133,6 @@ export class RxIpc {
 
 class MyProducer implements Producer<any> {
   private ipcListener: any | null = null
-  // private lastData: any | null = null
 
   constructor(private ipc: Electron.IpcRenderer | Electron.IpcMain, private channel: string, private applicator: Applicator | null | undefined) {
   }
@@ -103,7 +141,6 @@ class MyProducer implements Producer<any> {
     this.ipc.on(this.channel, (event: any, type: MessageType, data: any) => {
       switch (type) {
         case MessageType.INIT:
-          // this.lastData = clone(data)
           listener.next(data)
           break
 

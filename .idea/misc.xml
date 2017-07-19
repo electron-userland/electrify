@@ -3,7 +3,7 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
-  <component name="WebPackConfiguration">
-    <option name="path" value="$PROJECT_DIR$/webpack.config.js" />
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/src/main/tsconfig.json" />
   </component>
 </project>

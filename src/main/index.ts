@@ -4,10 +4,10 @@ import rxIpc from "../rx-ipc/main"
 import { ProjectInfoProducer } from "./ProjectInfoProducer"
 import { Project, StoreManager } from "./store"
 
-// to debug packed app as well
-require("electron-debug")({enabled: true})
-
 const isDev = process.env.NODE_ENV === "development"
+
+// to debug packed app as well
+require("electron-debug")({enabled: true, showDevTools: isDev})
 
 // set `__static` path to static files in production
 if (!isDev) {
@@ -24,7 +24,14 @@ app.once("ready", () => {
     projects.push(null)
   }
 
-  rxIpc.registerListener("toolStatus", webContents => xstream.create(new ProjectInfoProducer(webContents, storeManager)))
+  configureIpc(storeManager)
+
+  if (module.hot != null) {
+    module.hot.accept("./ProjectInfoProducer", () => {
+      rxIpc.cleanUp()
+      configureIpc(storeManager)
+    })
+  }
 
   for (const project of projects) {
     createWindow(project, storeManager)
@@ -36,6 +43,10 @@ app.once("ready", () => {
     }
   })
 })
+
+function configureIpc(storeManager: StoreManager) {
+  rxIpc.registerListener("toolStatus", webContents => xstream.create(new ProjectInfoProducer(webContents, storeManager)))
+}
 
 if (process.platform !== "darwin") {
   app.on("window-all-closed", () => {

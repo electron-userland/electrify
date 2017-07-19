@@ -28,7 +28,9 @@
     "appId": "build.electron.electrify",
     "files": [
       "!node_modules/deep-diff/releases{,/**/*}",
-      "!node_modules/bluebird/js/browser{,/**/*}"
+      "!node_modules/bluebird/js/browser{,/**/*}",
+      "!node_modules/source-map-support/**/*",
+      "node_modules/source-map-support/source-map-support.js"
     ]
   },
   "electronWebpack": {
@@ -47,32 +49,33 @@
     "deep-diff": "^0.3.8",
     "electron-debug": "^1.2.0",
     "electron-store": "^1.2.0",
-    "fs-extra-p": "^4.3.0",
+    "fs-extra-p": "^4.4.0",
     "node-watch": "^0.5.5",
     "shell-env": "^0.3.0",
     "source-map-support": "^0.4.15",
-    "xstream": "^10.8.0"
+    "xstream": "^10.9.0"
   },
   "devDependencies": {
-    "@types/jest": "^20.0.2",
+    "@types/jest": "^20.0.4",
     "devtron": "^1.4.0",
-    "electron": "1.7.4",
-    "electron-builder": "^19.16.0",
+    "electron": "1.7.5",
+    "electron-builder": "^19.16.1",
     "electron-builder-tslint-config": "^1.0.3",
     "electron-devtools-installer": "^2.2.0",
-    "electron-webpack": "0.3.0",
-    "electron-webpack-ts": "^1.0.0",
+    "electron-webpack": "^0.5.0",
+    "electron-webpack-ts": "^1.0.1",
     "electron-webpack-vue": "^1.0.3",
-    "iview": "^2.0.0-rc.18",
+    "iview": "^2.0.0-rc.19",
     "jest-cli": "^20.0.4",
     "jest-environment-node-debug": "^2.0.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "tslint": "^5.5.0",
     "typescript": "^2.4.1",
-    "vue": "^2.3.4",
+    "vue": "^2.4.1",
     "vue-router": "^2.7.0",
-    "webpack": "3.2.0"
+    "webpack": "3.3.0",
+    "webpack-build-notifier": "^0.1.15"
   },
   "jest": {
     "roots": [

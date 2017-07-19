@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ivu-article">
     <p>Create a directory <a href="https://github.com/electron-userland/electron-builder/wiki/Options#MetadataDirectories-buildResources" target="_blank">build</a> in the root of the project and save a
     <code>background.png</code> (macOS DMG background),
     <code>icon.icns</code> (macOS app icon)

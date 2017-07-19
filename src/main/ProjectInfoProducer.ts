@@ -1,4 +1,5 @@
 import BluebirdPromise from "bluebird-lst"
+import debugFactory from "debug"
 import { BrowserWindow, dialog } from "electron"
 import { FSWatcher } from "fs"
 import { readJson, stat } from "fs-extra-p"
@@ -10,9 +11,9 @@ import { StoreManager } from "./store"
 
 const watch = require("node-watch")
 
-const debug = require("debug")("electrify")
+const debug = debugFactory("electrify")
 
-// todo listed system changes (to update status when yarn will be installed
+// todo listed system changes (to update status when yarn will be installed)
 export class ProjectInfoProducer implements Producer<ProjectInfo> {
   private fsWatcher: FSWatcher | null = null
   private data: ProjectInfo = {
@@ -98,6 +99,7 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
       return
     }
 
+    debug(`Start watching ${packageFile}`)
     this.fsWatcher = watch(packageFile, {
       persistent: false,
     }, (event: "update" | "remove", file: string) => {
@@ -123,7 +125,7 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
 
     const fsWatcherHandle = this.fsWatcher
     if (fsWatcherHandle != null) {
-      debug("Stop package file watch")
+      debug("Stop watching package file")
       this.fsWatcher = null
       fsWatcherHandle.close()
     }

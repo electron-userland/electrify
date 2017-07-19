@@ -1,5 +1,3 @@
-import "source-map-support"
-
 import Vue from "vue"
 import App from "./App.vue"
 import "./initIView"

@@ -1,5 +1,5 @@
 {
-  "extends": "../src/tsconfig-base.json",
+  "extends": "../node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
     "module": "CommonJS",
     "target": "es2015",

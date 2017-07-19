@@ -20,17 +20,27 @@ function createStore() {
   return new Store(options)
 }
 
+function getHotData(): any {
+  return (module.hot == null ? null : module.hot.data) || {}
+}
+
 export class StoreManager {
   private readonly store = createStore()
   private isSaveOnWindowClose = true
 
-  private readonly windowToProject = new Map<Electron.BrowserWindow, Project | null>()
+  private readonly windowToProject = getHotData().windowToProject || new Map<Electron.BrowserWindow, Project | null>()
 
   constructor() {
     app.on("before-quit", () => {
       this.save()
       this.isSaveOnWindowClose = false
     })
+
+    if (module.hot != null) {
+      module.hot.dispose((data: any) => {
+        data.windowToProject = this.windowToProject
+      })
+    }
   }
 
   get isSomeProjectOpened() {
