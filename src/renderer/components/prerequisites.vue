@@ -36,5 +36,4 @@
     </Card>
   </div>
 </template>
-
 <script lang="ts" src="./prerequisites.ts"></script>

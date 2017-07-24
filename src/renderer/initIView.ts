@@ -1,10 +1,13 @@
 import "iview/dist/styles/iview.css"
-
+import Button from "iview/src/components/button"
 import Card from "iview/src/components/card"
+import Form from "iview/src/components/form"
 import * as grid from "iview/src/components/grid"
+import Input from "iview/src/components/input"
 import LoadingBar from "iview/src/components/loading-bar"
 import Menu from "iview/src/components/menu"
 import Tag from "iview/src/components/tag"
+import Tooltip from "iview/src/components/tooltip"
 import localeManager from "iview/src/locale"
 import enLocale from "iview/src/locale/lang/en-US"
 import Vue from "vue"
@@ -35,6 +38,13 @@ const nameToComponent: any = {
   Menu,
   Card,
   Tag,
+  Form,
+  iForm: Form,
+  FormItem: Form.Item,
+  Input,
+  Button,
+  Tooltip,
+  iButton: Button,
 }
 
 for (const name of Object.keys(nameToComponent)) {

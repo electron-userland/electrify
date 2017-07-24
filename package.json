@@ -6,10 +6,8 @@
   "license": "MIT",
   "main": "main.js",
   "scripts": {
-    "dev": "node node_modules/electron-webpack/dev-runner.js",
-    "dev-server": "webpack-dev-server --config node_modules/electron-webpack/webpack.renderer.config.js",
-    "compile": "webpack --env.production --progress --bail --config node_modules/electron-webpack/webpack.app.config.js",
-    "dll": "webpack --env.production --progress --bail --config node_modules/electron-webpack/webpack.renderer.dll.config.js",
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
     "dist-dir": "yarn compile && electron-builder --dir -c.compression=store -c.mac.identity=null",
     "dist": "yarn compile && electron-builder",
     "lint": "yarn lint:main && yarn lint:renderer",
@@ -20,7 +18,7 @@
     "lintAndFix": "yarn lint:main-fix && yarn lint:renderer-fix",
     "test": "tsc -p test && jest",
     "pretest": "webpack --display minimal --config node_modules/electron-webpack/webpack.test.config.js",
-    "postinstall": "yarn dll"
+    "postinstall": "electron-webpack dll"
   },
   "repository": "electron-userland/electrify",
   "build": {
@@ -37,8 +35,19 @@
     "renderer": {
       "dll": [
         "vue",
+        "vue-router",
         "iview/dist/styles/iview.css",
-        "iview/src/components/loading-bar"
+        "iview/src/components/button",
+        "iview/src/components/card",
+        "iview/src/components/form",
+        "iview/src/components/grid",
+        "iview/src/components/input",
+        "iview/src/components/loading-bar",
+        "iview/src/components/menu",
+        "iview/src/components/tag",
+        "iview/src/components/tooltip",
+        "iview/src/locale",
+        "iview/src/locale/lang/en-US"
       ]
     }
   },
@@ -47,7 +56,7 @@
     "clone": "^2.1.1",
     "debug": "^2.6.8",
     "deep-diff": "^0.3.8",
-    "electron-debug": "^1.2.0",
+    "electron-debug": "^1.3.0",
     "electron-store": "^1.2.0",
     "fs-extra-p": "^4.4.0",
     "node-watch": "^0.5.5",
@@ -59,20 +68,20 @@
     "@types/jest": "^20.0.4",
     "devtron": "^1.4.0",
     "electron": "1.7.5",
-    "electron-builder": "^19.16.1",
+    "electron-builder": "^19.16.2",
     "electron-builder-tslint-config": "^1.0.3",
     "electron-devtools-installer": "^2.2.0",
-    "electron-webpack": "^0.5.1",
-    "electron-webpack-ts": "^1.0.1",
-    "electron-webpack-vue": "^1.0.3",
+    "electron-webpack": "^0.6.0",
+    "electron-webpack-ts": "^1.0.2",
+    "electron-webpack-vue": "^1.0.4",
     "iview": "^2.0.0-rc.19",
     "jest-cli": "^20.0.4",
     "jest-environment-node-debug": "^2.0.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "tslint": "^5.5.0",
-    "typescript": "^2.4.1",
-    "vue": "^2.4.1",
+    "typescript": "^2.4.2",
+    "vue": "^2.4.2",
     "vue-router": "^2.7.0",
     "webpack": "3.3.0",
     "webpack-build-notifier": "^0.1.15"

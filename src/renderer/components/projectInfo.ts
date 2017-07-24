@@ -1,20 +1,22 @@
 import Vue from "vue"
 import Component from "vue-class-component"
 import { Route } from "vue-router"
+import { ProjectMetadata } from "../../common/projectInfo"
 import { getInfo } from "../projectInfoManager"
 
 @Component
-export default class extends Vue {
-  yarn = false
-  electronBuilder = {}
-  dependencies = {}
+export default class extends Vue implements ProjectMetadata {
+  name = ""
+  productName = ""
+  appId = ""
+  description = ""
 
   beforeRouteEnter(to: Route, from: Route, next: (r: Error | ((vm: Vue) => void)) => any) {
     // catch before then to not handle error in the then handler
     getInfo()
       .catch(error => next(error))
       .then(it => next(vm => {
-        Object.assign(vm, it.prerequisites)
+        Object.assign(vm, it.metadata)
       }))
   }
 }

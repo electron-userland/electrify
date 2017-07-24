@@ -22,6 +22,7 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
       electronBuilder: {},
       dependencies: {},
     },
+    metadata: {}
   }
 
   private listener: Listener<ProjectInfo> | null = null

@@ -20,7 +20,11 @@ export default new Router({
       children: [
         {
           path: "prerequisites",
-          component: () => import(/* webpackChunkName: "prerequisites" */ "./components/prerequisites.vue")
+          component: () => import(/* webpackChunkName: "project" */ "./components/prerequisites.vue")
+        },
+        {
+          path: "projectInfo",
+          component: () => import(/* webpackChunkName: "project" */ "./components/projectInfo.vue")
         },
         {
           path: "icons",

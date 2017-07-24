@@ -6,4 +6,13 @@ export interface ProjectInfoPrerequisites {
 
 export interface ProjectInfo {
   prerequisites: ProjectInfoPrerequisites
+
+  metadata: ProjectMetadata
+}
+
+export interface ProjectMetadata {
+  name?: string
+  productName?: string
+  appId?: string
+  description?: string
 }
