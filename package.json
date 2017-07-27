@@ -65,13 +65,13 @@
     "xstream": "^10.9.0"
   },
   "devDependencies": {
-    "@types/jest": "^20.0.4",
+    "@types/jest": "^20.0.5",
     "devtron": "^1.4.0",
     "electron": "1.7.5",
-    "electron-builder": "^19.16.2",
+    "electron-builder": "^19.17.0",
     "electron-builder-tslint-config": "^1.0.3",
     "electron-devtools-installer": "^2.2.0",
-    "electron-webpack": "^0.6.0",
+    "electron-webpack": "^0.6.1",
     "electron-webpack-ts": "^1.0.2",
     "electron-webpack-vue": "^1.0.4",
     "iview": "^2.0.0-rc.19",
@@ -83,8 +83,8 @@
     "typescript": "^2.4.2",
     "vue": "^2.4.2",
     "vue-router": "^2.7.0",
-    "webpack": "3.3.0",
-    "webpack-build-notifier": "^0.1.15"
+    "webpack": "3.4.1",
+    "webpack-build-notifier": "^0.1.16"
   },
   "jest": {
     "roots": [
