@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="dev" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file=".electron-vue/dev-runner.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="dev" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="node_modules/electron-webpack/src/dev-runner.js" working-dir="$PROJECT_DIR$">
     <envs>
       <env name="IJ" value="true" />
     </envs>

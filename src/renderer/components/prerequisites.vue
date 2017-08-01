@@ -29,7 +29,7 @@
         </template>
       </div>
 
-      <template v-if="electronBuilder.installed">
+      <template v-if="electronBuilder.latest != null">
         Latest electron-builder version: <a href="https://github.com/electron-userland/electron-builder/releases" target="_blank">{{electronBuilder.latest}}</a>
       </template>
       <code v-else>yarn add electron-builder --dev</code>

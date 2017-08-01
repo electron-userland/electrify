@@ -1,11 +1,11 @@
 import BluebirdPromise from "bluebird-lst"
+import { ProjectInfo } from "common/projectInfo"
 import debugFactory from "debug"
 import { BrowserWindow, dialog } from "electron"
 import { FSWatcher } from "fs"
 import { readJson, stat } from "fs-extra-p"
 import * as path from "path"
 import { Listener, Producer } from "xstream"
-import { ProjectInfo } from "../common/projectInfo"
 import { computePrerequisites } from "./lint/prerequisites"
 import { StoreManager } from "./store"
 
@@ -13,13 +13,20 @@ const watch = require("node-watch")
 
 const debug = debugFactory("electrify")
 
+export interface DataProducer {
+  dataChanged(): void
+}
+
 // todo listed system changes (to update status when yarn will be installed)
-export class ProjectInfoProducer implements Producer<ProjectInfo> {
+export class ProjectInfoProducer implements Producer<ProjectInfo>, DataProducer {
   private fsWatcher: FSWatcher | null = null
-  private data: ProjectInfo = {
+  private readonly data: ProjectInfo = {
     prerequisites: {
       yarn: true,
-      electronBuilder: {},
+      electronBuilder: {
+        installed: false,
+        latest: null,
+      },
       dependencies: {},
     },
     metadata: {}
@@ -32,6 +39,12 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
 
   private get window() {
     return BrowserWindow.fromWebContents(this.webContents)
+  }
+
+  dataChanged() {
+    if (this.listener != null) {
+      this.listener.next(this.data)
+    }
   }
 
   start(listener: Listener<ProjectInfo>) {
@@ -91,7 +104,23 @@ export class ProjectInfoProducer implements Producer<ProjectInfo> {
 
   private async computeProjectInfo(projectDir: string): Promise<ProjectInfo> {
     const metadata = await readJson(path.join(projectDir, "package.json"))
-    await computePrerequisites(this.data, projectDir, metadata)
+    await computePrerequisites(this.data, projectDir, metadata, this)
+
+    this.data.metadata.name = metadata.name
+    this.data.metadata.description = metadata.description
+
+    // tslint:disable-next-line:no-eval
+    const electronBuilderConfig = eval("require")(path.join(projectDir, "node_modules", "electron-builder", "out/util/config"))
+    const getBuilderConfig = electronBuilderConfig == null ? null : electronBuilderConfig.getConfig
+    if (getBuilderConfig != null) {
+      const config = await getBuilderConfig(projectDir, null, null, null)
+      this.data.metadata.appId = config.appId
+      this.data.metadata.productName = config.productName
+    }
+    else {
+      this.data.metadata.appId = ""
+      this.data.metadata.productName = ""
+    }
     return this.data
   }
 

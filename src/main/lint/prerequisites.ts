@@ -1,22 +1,32 @@
 import BluebirdPromise from "bluebird-lst"
 import { execFile } from "child_process"
+import { ProjectInfo } from "common/projectInfo"
 import { net } from "electron"
-import { ProjectInfo } from "../../common/projectInfo"
+import { DataProducer } from "../ProjectInfoProducer"
 import { Lazy } from "../util"
 
 const bashEnv = new Lazy(() => require("shell-env")())
 
-const latestElectronBuilderVersion = new Lazy<string>(() => getLatestElectronBuilderVersion())
+const latestElectronBuilderVersion = new Lazy<string>(() => getLatestElectronBuilderVersion()
+  .catch(error => {
+    console.log(JSON.stringify(error, null, 2))
+    return null
+  }))
 
-export function computePrerequisites(data: ProjectInfo, projectDir: string, metadata: any) {
-  return BluebirdPromise.all([getYarnVersion(projectDir), latestElectronBuilderVersion.value])
-    .then(it => {
-      data.prerequisites.yarn = it[0]
-      applyMetadata(data, metadata, it[1])
-    })
+export async function computePrerequisites(data: ProjectInfo, projectDir: string, metadata: any, dataProducer: DataProducer) {
+  if (!latestElectronBuilderVersion.hasValue) {
+    latestElectronBuilderVersion.value
+      .then(it => {
+        data.prerequisites.electronBuilder.latest = it
+        dataProducer.dataChanged()
+      })
+  }
+
+  data.prerequisites.yarn = await getYarnVersion(projectDir)
+  applyMetadata(data, metadata, latestElectronBuilderVersion.hasValue ? (await latestElectronBuilderVersion.value) : null)
 }
 
-export function applyMetadata(data: ProjectInfo, metadata: any, latestElectronBuilderVersion: string) {
+function applyMetadata(data: ProjectInfo, metadata: any, latestElectronBuilderVersion: string | null) {
   const deps = metadata.devDependencies
   const result = {installed: false, latest: latestElectronBuilderVersion}
   if (deps != null) {

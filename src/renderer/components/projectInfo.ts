@@ -1,7 +1,7 @@
+import { ProjectMetadata } from "common/projectInfo"
 import Vue from "vue"
 import Component from "vue-class-component"
 import { Route } from "vue-router"
-import { ProjectMetadata } from "../../common/projectInfo"
 import { getInfo } from "../projectInfoManager"
 
 @Component

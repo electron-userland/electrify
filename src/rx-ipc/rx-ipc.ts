@@ -200,7 +200,7 @@ class MyListener implements Listener<any> {
   }
 
   error(error: any) {
-    this.replyTo.send(this.subChannel, MessageType.ERROR, error.toString())
+    this.replyTo.send(this.subChannel, MessageType.ERROR, error.stack || error.toString())
   }
 
   complete() {

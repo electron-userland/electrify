@@ -1,7 +1,12 @@
 export interface ProjectInfoPrerequisites {
   yarn: boolean
-  electronBuilder: any
+  electronBuilder: DependencyInfo
   dependencies: { [name: string]: any}
+}
+
+export interface DependencyInfo {
+  installed: boolean
+  latest: string | null
 }
 
 export interface ProjectInfo {
