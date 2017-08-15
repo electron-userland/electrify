@@ -20,4 +20,6 @@ export interface ProjectMetadata {
   productName?: string
   appId?: string
   description?: string
+
+  author?: string
 }

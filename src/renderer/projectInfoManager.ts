@@ -1,5 +1,6 @@
 import BluebirdPromise from "bluebird-lst"
 import { ProjectInfo } from "common/projectInfo"
+import debugFactory from "debug"
 import { diff, IDiff } from "deep-diff"
 import { ipcRenderer } from "electron"
 import LoadingBar from "iview/src/components/loading-bar"
@@ -10,16 +11,25 @@ import { applyDiff } from "./vue-apply-diff"
 
 let info: ProjectInfo | null = null
 
+const debug = debugFactory("electrify")
+
 class ProjectInfoListener implements Listener<ProjectInfo>, Applicator {
   constructor(private resolve: ((data: ProjectInfo) => void) | null, private reject: ((error: Error | any) => void) | null) {
     LoadingBar.start()
   }
 
   applyChanges(changes: Array<IDiff>): void {
+    if (debug.enabled) {
+      debug("Diff: " + JSON.stringify(changes, null, 2))
+    }
     applyDiff(info, changes)
   }
 
   next(data: ProjectInfo): void {
+    if (debug.enabled) {
+      debug("Initial data: " + JSON.stringify(data, null, 2))
+    }
+
     const resolve = this.resolve
     if (resolve == null) {
       Object.assign(info, data)

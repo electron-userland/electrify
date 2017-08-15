@@ -52,7 +52,7 @@ export class ProjectInfoProducer implements Producer<ProjectInfo>, DataProducer 
     this.doStart()
       .then(data => listener.next(data))
       .catch(error => {
-        debug(error)
+        console.error(error.stack || error.toString())
         listener.error(error)
       })
   }
@@ -91,12 +91,11 @@ export class ProjectInfoProducer implements Producer<ProjectInfo>, DataProducer 
             path: projectDir
           }, this.window)
 
-          this.computeProjectInfo(projectDir)
+          return this.computeProjectInfo(projectDir)
             .then(it => {
               this.watchProjectPackageFile(path.join(projectDir, "package.json"))
               resolve(it)
             })
-            .catch(reject)
         })
         .catch(reject)
     })
@@ -108,12 +107,12 @@ export class ProjectInfoProducer implements Producer<ProjectInfo>, DataProducer 
 
     this.data.metadata.name = metadata.name
     this.data.metadata.description = metadata.description
+    this.data.metadata.author = metadata.author
 
-    // tslint:disable-next-line:no-eval
-    const electronBuilderConfig = eval("require")(path.join(projectDir, "node_modules", "electron-builder", "out/util/config"))
+    const electronBuilderConfig = require("try-require")(path.join(projectDir, "node_modules", "electron-builder", "out/util/config"))
     const getBuilderConfig = electronBuilderConfig == null ? null : electronBuilderConfig.getConfig
     if (getBuilderConfig != null) {
-      const config = await getBuilderConfig(projectDir, null, null, null)
+      const config = await getBuilderConfig(projectDir)
       this.data.metadata.appId = config.appId
       this.data.metadata.productName = config.productName
     }
@@ -143,6 +142,7 @@ export class ProjectInfoProducer implements Producer<ProjectInfo>, DataProducer 
           }
         })
         .catch(error => {
+          console.error(error.stack || error.toString())
           if (this.listener != null) {
             return this.listener.error(error)
           }

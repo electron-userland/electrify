@@ -10,6 +10,9 @@ export default class extends Vue implements ProjectMetadata {
   productName = ""
   appId = ""
   description = ""
+  author = ""
+
+  changedData = {}
 
   beforeRouteEnter(to: Route, from: Route, next: (r: Error | ((vm: Vue) => void)) => any) {
     // catch before then to not handle error in the then handler
@@ -18,5 +21,9 @@ export default class extends Vue implements ProjectMetadata {
       .then(it => next(vm => {
         Object.assign(vm, it.metadata)
       }))
+  }
+
+  applyChanges() {
+    alert("Changed " + JSON.stringify(this.changedData))
   }
 }

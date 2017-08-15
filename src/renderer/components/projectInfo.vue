@@ -1,12 +1,12 @@
 <style>
   input {
-    width: 20em !important
+    width: 22em !important
   }
 </style>
 <template>
   <Form :label-width="100">
     <Form-item label="Author">
-      <Input placeholder="Your Name or Foo, Inc"/>
+      <Input placeholder="Your Name or Foo, Inc" :value="author" @on-change="changedData.author = $event.target.value"/>
     </Form-item>
     <Form-item label="App ID">
       <Tooltip>
@@ -17,8 +17,7 @@
             for Windows (NSIS target only, Squirrel.Windows not supported). It is strongly recommended that an explicit ID be set.
           </p>
         </div>
-        <Input placeholder="com.electron.appName"/>
-
+        <Input placeholder="com.electron.appName" :value="appId" @on-change="changedData.appId = $event.target.value"/>
       </Tooltip>
     </Form-item>
     <Form-item label="Name" required="true">
@@ -27,7 +26,7 @@
           <p style="white-space: normal;">
             As <a href="https://docs.npmjs.com/files/package.json#name" target="_blank">package name</a>.</p>
         </div>
-        <Input/>
+        <Input :value="name" @on-change="changedData.name = $event.target.value"/>
       </Tooltip>
     </Form-item>
     <Form-item label="Product Name">
@@ -36,14 +35,14 @@
           <p style="white-space: normal;">
             As name, but allows to specify a product name for your app which contains spaces and other special characters not allowed in the name property.</p>
         </div>
-        <Input/>
+        <Input :value="productName" @on-change="changedData.productName = $event.target.value"/>
       </Tooltip>
     </Form-item>
     <Form-item label="Description">
-      <Input type="textarea"/>
+      <Input type="textarea" :value="description" @on-change="changedData.description = $event.target.value"/>
     </Form-item>
     <Form-item>
-      <Button type="primary">Apply</Button>
+      <Button type="primary" @click="applyChanges">Apply</Button>
     </Form-item>
   </Form>
 </template>

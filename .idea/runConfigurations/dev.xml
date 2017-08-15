@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="dev" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="node_modules/electron-webpack/src/dev-runner.js" working-dir="$PROJECT_DIR$">
     <envs>
-      <env name="IJ" value="true" />
+      <env name="ELECTRON_ARGS" value="[&quot;--inspect-brk=5858&quot;]" />
     </envs>
     <method />
   </configuration>

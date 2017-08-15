@@ -58,16 +58,24 @@ function createWindow(project: Project | null, storeManager: StoreManager) {
   const window = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
   })
 
   if (project != null) {
     storeManager.addProject(project, window, false)
   }
   window.loadURL(winURL)
+  window.setTitle(`Electrify - ${project == null ? "open project" : project.path}`)
 
   window.webContents.on("new-window", (event, url) => {
     event.preventDefault()
     shell.openExternal(url)
+  })
+
+  window.webContents.on("devtools-opened", () => {
+    window.focus()
+    setImmediate(() => {
+      window.focus()
+    })
   })
 }
