@@ -4,7 +4,6 @@
   "author": "Vladimir Krivosheev <develar@gmail.com>",
   "description": "Step-by-step wizard to prepare Electron app for distribution, from packaging to auto-update",
   "license": "MIT",
-  "main": "main.js",
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
@@ -61,17 +60,17 @@
     "fs-extra-p": "^4.4.0",
     "node-watch": "^0.5.5",
     "shell-env": "^0.3.0",
-    "source-map-support": "^0.4.15",
+    "source-map-support": "^0.4.16",
     "try-require": "^1.2.1",
     "xstream": "^10.9.0"
   },
   "devDependencies": {
     "@types/jest": "^20.0.7",
     "devtron": "^1.4.0",
-    "electron": "1.7.5",
-    "electron-builder": "^19.22.1",
+    "electron": "1.7.6",
+    "electron-builder": "^19.24.1",
     "electron-builder-tslint-config": "^1.0.3",
-    "electron-webpack": "^0.11.1",
+    "electron-webpack": "^1.0.1",
     "electron-webpack-ts": "^1.0.3",
     "electron-webpack-vue": "^1.0.6",
     "iview": "^2.1.0",
@@ -83,7 +82,7 @@
     "typescript": "^2.4.2",
     "vue": "^2.4.2",
     "vue-router": "^2.7.0",
-    "webpack": "3.5.4",
+    "webpack": "3.5.5",
     "webpack-build-notifier": "^0.1.16"
   },
   "jest": {

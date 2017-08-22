@@ -37,4 +37,4 @@ export default new Router({
       redirect: "/project/prerequisites"
     }
   ]
-})
+} as any)
