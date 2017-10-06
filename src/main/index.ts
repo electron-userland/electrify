@@ -14,7 +14,7 @@ if (!isDev) {
   (global as any).__static = require("path").join(__dirname, "/static").replace(/\\/g, "\\\\")
 }
 
-const winURL = isDev ? `http://localhost:9080` : `file://${__dirname}/index.html`
+const winURL = isDev ? `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}` : `file://${__dirname}/index.html`
 
 app.once("ready", () => {
   const storeManager = new StoreManager()
