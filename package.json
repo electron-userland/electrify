@@ -52,45 +52,42 @@
   },
   "dependencies": {
     "bluebird-lst": "^1.0.5",
-    "clone": "^2.1.1",
+    "clone": "^2.1.2",
     "debug": "^3.1.0",
-    "deep-diff": "^1.0.0",
-    "electron-debug": "^1.5.0",
-    "electron-store": "^1.3.0",
-    "fs-extra-p": "^4.6.0",
+    "deep-diff": "^1.0.2",
+    "electron-debug": "^2.0.0",
+    "electron-store": "^2.0.0",
+    "fs-extra-p": "^4.6.1",
     "node-watch": "^0.5.8",
-    "shell-env": "^1.0.0",
-    "source-map-support": "^0.5.5",
+    "shell-env": "^2.0.1",
+    "source-map-support": "^0.5.9",
     "try-require": "^1.2.1",
-    "xstream": "^11.2.0"
+    "xstream": "^11.7.0"
   },
   "devDependencies": {
-    "@types/jest": "^22.2.3",
+    "@types/jest": "^23.3.1",
     "devtron": "^1.4.0",
-    "electron": "2.0.0",
-    "electron-builder": "^20.11.1",
+    "electron": "2.0.7",
+    "electron-builder": "^20.28.1",
     "electron-builder-tslint-config": "^1.1.0",
-    "electron-webpack": "file:///Users/develar/Documents/electron-webpack/packages/electron-webpack",
-    "electron-webpack-ts": "^2.0.2",
-    "electron-webpack-vue": "^2.1.2",
-    "iview": "^2.13.1",
-    "jest-cli": "^22.4.3",
+    "electron-webpack": "~2.2.1",
+    "electron-webpack-ts": "^2.1.0",
+    "electron-webpack-vue": "^2.2.0",
+    "iview": "^3.0.0",
+    "jest-cli": "^23.5.0",
     "jest-environment-node-debug": "^2.0.0",
-    "less": "^3.0.4",
+    "less": "^3.8.1",
     "less-loader": "^4.1.0",
-    "tslint": "^5.10.0",
-    "typescript": "^2.8.3",
-    "vue": "^2.5.16",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1",
+    "vue": "^2.5.17",
     "vue-router": "^3.0.1",
-    "webpack": "4.8.1",
-    "webpack-build-notifier": "^0.1.25"
+    "webpack": "4.16.5",
+    "webpack-build-notifier": "^0.1.28"
   },
   "jest": {
     "roots": [
       "<rootDir>/test"
     ]
-  },
-  "resolutions": {
-    "webpack-sources": "1.0.1"
   }
 }
